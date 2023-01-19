@@ -15,3 +15,5 @@ yarn-error.log
 *.pyc
 **/__pycache__/
 **/env
+
+API_KEY.json

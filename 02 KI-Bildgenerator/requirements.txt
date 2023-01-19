@@ -1,0 +1,8 @@
+# DALL-E API
+openai
+
+# Grafischer Debugger auf der Konsole
+pudb
+
+# Bibliothek zum Anzeigen der ausgeführten Programmzeilen auf der Konsole
+PySnooper
