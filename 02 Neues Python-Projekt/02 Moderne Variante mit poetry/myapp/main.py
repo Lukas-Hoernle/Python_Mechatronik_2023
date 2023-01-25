@@ -11,12 +11,12 @@ einem Projekt hinzuzfügen, zu installieren oder zu deinstallieren.
 Für JavaScript-Umsteiger fühlt sich die Arbeit damit mehr wie von
 Node.js gewohnt an. :-)
 
-Dieses Beispiel verwendet die auch `rich` aufbauende Bibliothek `textual`
+Dieses Beispiel verwendet die auf `rich` aufbauende Bibliothek `textual`,
 um eine grafische Terminalanwendung zu erstellen. Denn textbasierte
 User Interfaces sind spätestens seit den 2010ern gerade unter Entwicklern
-besonders populär, wobei sich viele geradezu darin überbieten, was man
-aus einem einfachen Terminalfenster herauskitzeln kann. Nun, da wollen
-wir als angehende Python-Entwickler natürlich mithalten können.
+besonders populär! Da wollen wir als angehende Python-Entwickler natürlich
+mithalten können. Diese Anwendung kann daher sowohl mit der Tastatur als
+auch mit der Maus bedient werden, obwohl sie komplett im Terminal läuft.
 
 Der eigentliche Quellcode dieses Programms ist gar nicht so wichtig.
 Er wurde einfach aus der Textual-Dokumentation geklaut und etwas
