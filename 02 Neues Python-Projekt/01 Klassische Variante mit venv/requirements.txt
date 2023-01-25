@@ -1,0 +1,3 @@
+# Rich: https://pypi.org/project/rich/
+# Farbige und formatierte Konsolenausgaben
+rich~=13.2
