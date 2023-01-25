@@ -5,7 +5,7 @@ Kurzbeschreibung
 ----------------
 
 Dieses Repository beinhaltet sämtliche zur Verfügung gestellten Quellcodes,
-Aufgaben und Praxisbeispiele der Vorlesung „Internet eof Things” im Studiengang
+Aufgaben und Praxisbeispiele der Vorlesung „Internet of Things” im Studiengang
 Mechatronik an der DHBW Karlsruhe.
 
 Copyright
