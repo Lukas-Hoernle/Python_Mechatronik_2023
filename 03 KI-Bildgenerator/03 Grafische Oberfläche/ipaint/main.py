@@ -17,14 +17,14 @@ class IPaintApp(App):
     Hauptklasse der Anwendung. Definiert das User Interface und nutzt die anderen
     Klassen der Anwendung zur Ausführung der gewünschten Aktionen.
     """
-    
+
     CSS_PATH = "style.css"
     TITLE = "I-Paint (so therefor I am)"
 
     BINDINGS = [
         ("x", "quit", "Programm beenden"),
     ]
-    
+
     _prompt = "Pyramid made of cheeseburgers, 1960s advertisement"
     _image = None
     _textlog = TextLog(id="textlog")
@@ -83,7 +83,7 @@ class IPaintApp(App):
 
     def on_button_pressed(self, event):
         """
-        Event Handler für das Eingabefeld. Sichert den 
+        Event Handler für die Buttons.
         """
         self._textlog.clear()
 
