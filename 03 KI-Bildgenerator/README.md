@@ -7,10 +7,12 @@ Dieses Beispiel nutzt die öffentliche API des DALL-E Bildgenerators von OpenAI.
  * API-Beschreibung: https://beta.openai.com/docs/guides/images
  * Tutorial auf Realpython.com: https://realpython.com/generate-images-with-dalle-openai-api/
 
-<img src="Beispielbilder%2FAstronaut%20with%20cowboy%20hat%20riding%20horse%20on%20Mars.png" width="150"/>
-<img src="Beispielbilder/mad%20professor%20working%20late%20night%20on%20his%20computer.png" width="150"/>
-<img src="Beispielbilder%2FSnoopy%20as%20Joe%20Cool%20leaning%20against%20a%20red%20dog%20house.png" width="150"/>
-<img src="Beispielbilder/Astronaut%20with%20cowboy%20hat%20riding%20horse%20on%20Mars%20%282%29.png" width="150"/>
+<p float="left">
+  <img src="Beispielbilder%2FAstronaut%20with%20cowboy%20hat%20riding%20horse%20on%20Mars.png" width="200"/>
+  <img src="Beispielbilder/mad%20professor%20working%20late%20night%20on%20his%20computer.png" width="200"/>
+  <img src="Beispielbilder%2FSnoopy%20as%20Joe%20Cool%20leaning%20against%20a%20red%20dog%20house.png" width="200"/>
+  <img src="Beispielbilder/Astronaut%20with%20cowboy%20hat%20riding%20horse%20on%20Mars%20%282%29.png" width="200"/>
+</p>
 
 Varianten des Beispiels
 -----------------------
