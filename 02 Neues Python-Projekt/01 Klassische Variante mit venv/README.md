@@ -105,10 +105,10 @@ Probleme mit der PowerShell unter Windows
 
 Die Sicherheitseinstellungen von Windows verbieten die Ausführung von
 PowerShell-Skripten, wenn dieses Feature nicht explizit aktiviert wurde.
-Dies dient als Vorsorge gegen sogenannte Skript-Viren, die bis in die
-früher 2000er ein großes Problem darstellten, schränkt die gebrauchstauglichkeit
-der PowerShell aber auch deutlich ein. Für uns heißt das aber leider auch,
-dass die Aktivierung eines Environments zunächst mit folgender Fehlermeldung
+Dies dient als Vorsorge gegen Skript-Viren, die bis in die frühen 2000er
+ein großes Problem darstellten, schränkt die gebrauchstauglichkeit der
+PowerShell aber deutlich ein. Für uns heißt das aber leider auch, dass
+die Aktivierung eines Environments zunächst mit folgender Fehlermeldung
 abbricht:
 
   ```
