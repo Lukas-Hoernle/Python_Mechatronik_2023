@@ -7,12 +7,10 @@ Dieses Beispiel nutzt die öffentliche API des DALL-E Bildgenerators von OpenAI.
  * API-Beschreibung: https://beta.openai.com/docs/guides/images
  * Tutorial auf Realpython.com: https://realpython.com/generate-images-with-dalle-openai-api/
 
-<div style="display: flex; width: 100%; margin: 2em 0 2em 0;">
-  <img src="Beispielbilder%2FAstronaut%20with%20cowboy%20hat%20riding%20horse%20on%20Mars.png" alt="Astronaut with cowboy hat riding horse on Mars" style="width: 100%; overflow: hidden;"/>
-  <img src="Beispielbilder/mad%20professor%20working%20late%20night%20on%20his%20computer.png" alt="mad professor working late night on his computer" style="width: 100%; overflow: hidden;"/>
-  <img src="Beispielbilder%2FSnoopy%20as%20Joe%20Cool%20leaning%20against%20a%20red%20dog%20house.png" alt="Snoopy as Joe Cool leaning against a red dog house" style="width: 100%; overflow: hidden;"/>
-  <img src="Beispielbilder/Astronaut%20with%20cowboy%20hat%20riding%20horse%20on%20Mars%20%282%29.png" alt="Astronaut with cowboy hat riding horse on Mars" style="width: 100%; overflow: hidden;"/>
-</div>
+<img src="Beispielbilder%2FAstronaut%20with%20cowboy%20hat%20riding%20horse%20on%20Mars.png" width="150"/>
+<img src="Beispielbilder/mad%20professor%20working%20late%20night%20on%20his%20computer.png" width="150"/>
+<img src="Beispielbilder%2FSnoopy%20as%20Joe%20Cool%20leaning%20against%20a%20red%20dog%20house.png" width="150"/>
+<img src="Beispielbilder/Astronaut%20with%20cowboy%20hat%20riding%20horse%20on%20Mars%20%282%29.png" width="150"/>
 
 Varianten des Beispiels
 -----------------------
