@@ -1,6 +1,11 @@
 Neues Python-Projekt
 ====================
 
+ 1. [Übersicht](#übersicht)
+ 1. [Abhängigkeiten verwalten mit venv](#abhängigkeiten-verwalten-mit-venv)
+ 1. [Probleme mit der PowerShell unter Windows](#probleme-mit-der-powershell-unter-windows)
+ 1. [Wichtige Pip-Kommandos](#wichtige-pip-kommandos)
+
 Übersicht
 ---------
 
@@ -94,6 +99,38 @@ zu arbeiten.
 
 Für eine sehr ausführliche Erklärung siehe:
 https://realpython.com/python-virtual-environments-a-primer/
+
+Probleme mit der PowerShell unter Windows
+-----------------------------------------
+
+Die Sicherheitseinstellungen von Windows verbieten die Ausführung von
+PowerShell-Skripten, wenn dieses Feature nicht explizit aktiviert wurde.
+Dies dient als Vorsorge gegen sogenannte Skript-Viren, die bis in die
+früher 2000er ein großes Problem darstellten, schränkt die gebrauchstauglichkeit
+der PowerShell aber auch deutlich ein. Für uns heißt das aber leider auch,
+dass die Aktivierung eines Environments zunächst mit folgender Fehlermeldung
+abbricht:
+
+  ```
+  Die Datei "...\.env\Scripts\activate.ps1" kann nicht geladen werden, da
+  die Ausführung von Skripts auf diesem System deaktiviert ist.
+  ```
+
+Indem die PowerShell einmal als Administrator geöffnet wird (einfach im
+Startmenü nach PowerShell suchen und dann den entsprechenden Eintrag auswählen),
+kann diese Richtlinie mit folgendem Befehl überprüft werden:
+
+  ```PowerShell
+  Get-ExecutionPolicy
+  ```
+
+Als Ergebnis wird in der Regel `restricted` angezeigt, was genau dem oben
+beschriebenen Verhalten entspricht. Folgender Befehl ändert die Einstellung,
+so dass signierte Skripte zugelassen werden:
+
+  ```PowerShell
+  Set-ExecutionPolicy RemoteSigned
+  ```
 
 Wichtige Pip-Kommandos
 ----------------------

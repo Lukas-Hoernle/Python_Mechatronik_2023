@@ -1,0 +1,44 @@
+#======================================================================
+# I-Paint KI-Bildgenerator: Benötigte Bibliotheken
+# 
+# Da Python keine Vorgaben darüber macht, ob und wie man virtuelle
+# Python-Umgebungen nutzt, dokumentiert diese Datei alle benötigten
+# Bibliotheken für alle Versionen des Programms. Im Grunde genommen
+# handelt es sich dabei lediglich um die Bibliothek "openai" für die
+# Nutzung der OpenAI-Services sowie in der Endausbaustufe "textual"
+# für eine einfache Benutzeroberfläche.
+#
+# Zum Ausführen der Beispiele kann mit folgenden Befehlen einfach eine
+# neue Umgebung im Hauptverzeichnis angelegt und bestückt werden:
+#
+#  $ python -m venv .env
+#  Linux/Mac: $ source env/bin/activate 
+#  Windows: env\Scripts\activate
+#
+#  $ pip install -r requirements.txt
+#
+# Diese Datei trennt nicht zwischen für die Ausführung und nur für
+# die Entwicklung benötigten Abhängigkeiten. "pudb" und "PySnooper"
+# sollen beim Debuggen helfen, werden für die produktive Ausführung
+# später aber nicht mehr benötigt.
+#======================================================================
+
+#----------------------------------------------------------------------
+# Alle Versionen
+#----------------------------------------------------------------------
+
+# DALL-E API
+openai
+
+# Grafischer Debugger auf der Konsole
+pudb
+
+# Bibliothek zum Anzeigen der ausgeführten Programmzeilen auf der Konsole
+PySnooper
+
+#----------------------------------------------------------------------
+# Version 3: Grafische Oberfläche
+#----------------------------------------------------------------------
+
+# Bibliothek für moderne Text User Interfaces
+textual~=0.10.1

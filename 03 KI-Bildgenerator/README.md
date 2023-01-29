@@ -10,7 +10,7 @@ Dieses Beispiel nutzt die öffentliche API des DALL-E Bildgenerators von OpenAI.
 Varianten des Beispiels
 -----------------------
 
- * *****01 Minimalversion:** Super einfaches Python-Skript zum Aufruf der API
+ * **01 Minimalversion:** Super einfaches Python-Skript zum Aufruf der API
  * **02 Klassenbasierte Struktur:** Erste Zwischenversion auf dem Weg zu einer richtigen Anwendung
  * **03 Grafische Oberfläche:** Noch bessere Version, die zusätzlich ein Text UI besitzt
 
@@ -48,10 +48,31 @@ folgt aussehen:
 Ausführen der Beispiele
 -----------------------
 
-Die Beispiele verwenden jeweils [Peotry](https://python-poetry.org) zur
-Verwaltung der Abhängigkeiten und des Python Environments. Die Beispiele
-können im jeweiligen Unterverzeichnis mit `peotry run python ipaint/main.py`
-ausgeführt werden.
+Dieses Projekt verwendet eine simple `requirements.txt`-Datei zur Deklaration
+der benötigten Bibliotheken. Dies ist die einfachste Art, wie ein Python-Projekt
+seine Abhängigkeiten definieren kann. Als Nutzer/Entwickler des Projekts legt
+man sich dann einfach ein neues Python Environment an und installiert darin mit
+folgenden Befehlen die Bibliotheken:
 
-Weitere Einzelheiten zu Poetry finden sich im Beispielquellcode zur
-Anlage neuer Python-Projekte.
+__Linux/Mac:__
+
+  ```sh
+  python -m venv .env
+  source env/bin/activate 
+  pip install -r requirements.txt
+  ```
+
+__Windows:__
+
+  ```sh
+  python -m venv .env
+  env\Scripts\activate
+  pip install -r requirements.txt
+  ```
+
+Alternativ könnte mit einem Werkzeug wie Poetry eine Datei namens `pyproject.toml`
+angelegt und verwaltet werden. Dies hätte den Vorteil, dass die Anwendung mit den
+dafür vorgesehenen Werkzeugen von Python installiert werden kann, ohne manuell ein
+Environment verwalten zu müssen. Für Bibliotheken, die in anderen Projekten verwendet
+werden sollen, ist das besonders wichtig. Für einfache Programme wie dieses hier
+aber nicht zwingend notwendig.
