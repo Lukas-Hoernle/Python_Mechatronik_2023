@@ -12,7 +12,7 @@ from gpiozero import DistanceSensor
 from time import sleep
 
 try:
-    # pigpio-Bibliothek für höhere Genauifket verwenden, falls installiert
+    # pigpio-Bibliothek für höhere Genauigkeit verwenden, falls installiert
     from gpiozero.pins.pigpio import PiGPIOFactory
     from gpiozero import Device
     Device.pin_factory = PiGPIOFactory()
