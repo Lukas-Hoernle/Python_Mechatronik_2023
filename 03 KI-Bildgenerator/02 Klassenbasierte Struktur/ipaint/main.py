@@ -1,8 +1,7 @@
-#! /usr/bin/env python3
-
 """
 Hauptdatei des Programms.
 """
+
 from ipaint.apikey import ApiKeyManager
 from ipaint.generator.openai import Text2Image_OpenAI_DallE
 
@@ -40,6 +39,3 @@ def main():
             print(f"Bild wurde gespeichert: {os.path.relpath(filename, this_dir)}")
         
         print()
-        
-if __name__ == "__main__":
-    main()

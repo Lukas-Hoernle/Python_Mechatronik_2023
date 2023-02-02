@@ -6,3 +6,6 @@ pudb
 
 # Bibliothek zum Anzeigen der ausgeführten Programmzeilen auf der Konsole
 PySnooper
+
+# TUI Benutzeroberfläche
+textual

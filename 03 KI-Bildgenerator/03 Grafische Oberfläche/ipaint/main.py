@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 """
 Hauptdatei des Programms.
 """
@@ -104,7 +102,3 @@ class IPaintApp(App):
                     self._textlog.write(f"Bild wurde gespeichert: {filename}")
                 else:
                     self._textlog.write("Generieren Sie erst ein Bild!")
-
-if __name__ == "__main__":
-    app = IPaintApp()
-    app.run()

@@ -1,9 +1,5 @@
 #! /usr/bin/env python3
 
-"""
-Hauptdatei des Programms.
-"""
-
 import json, os, webbrowser
 import openai
 #import pysnooper
@@ -30,7 +26,3 @@ def main():
     image_url = response['data'][0]['url']
 
     webbrowser.open(image_url)
-
-if __name__ == "__main__":
-    #import pudb; pu.db
-    main()
