@@ -6,7 +6,7 @@ def fixedInterval(seconds):
     """
     prev_time = 0
 
-    while True
+    while True:
         curr_time = time.monotonic()
 
         if (curr_time - prev_time) >= seconds:
@@ -21,7 +21,7 @@ def randomInterval(min_seconds, max_seconds):
     prev_time = 0
     seconds = random.randint(min_seconds, max_seconds)
 
-    while True
+    while True:
         curr_time = time.monotonic()
 
         if (curr_time - prev_time) >= seconds:
@@ -34,7 +34,7 @@ def onObstacle(vehicle, max_pushback):
     """
     Richtungswechsel bei Hinderniss.
     """
-    while True
+    while True:
         if vehicle.obstacle_pushback >= max_pushback:
             yield True
         else:
