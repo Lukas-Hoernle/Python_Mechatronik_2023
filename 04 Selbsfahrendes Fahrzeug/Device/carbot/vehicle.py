@@ -118,9 +118,10 @@ class Vehicle:
             # Berechnete Motorgeschwindigkeiten übernehmen
             if self._speed_left != prev_speed_left \
             or self._speed_right != prev_speed_right:
-            	prev_speed_left = self._speed_left
-            	prev_speed_right = self._speed_right
-            	print(f"Neue Motorgeschwindigkeiten: {self._speed_left}, {self._speed_right}")
+                prev_speed_left = self._speed_left
+                prev_speed_right = self._speed_right
+                
+                print(f"Neue Motorgeschwindigkeiten: {self._speed_left}, {self._speed_right}")
             	
             self._motor_left.value  = self._speed_left
             self._motor_right.value = self._speed_right
