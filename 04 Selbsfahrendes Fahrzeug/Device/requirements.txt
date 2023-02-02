@@ -1,0 +1,33 @@
+# Allgemeine GPIO-Bibliothek
+gpiozero
+
+# Für geneuere Ansteuerung der GPIOs. Benötigt allerdings die Installtion
+# weiterer Pakete unter Raspbian Linux. Hierfür bitte folgende Befehle
+# ausführen:
+#
+#   sudo apt update
+#   sudo apt install pigpiod pigpio-tools
+#   sudo systemctl enable pigpiod
+#   sudo systemctl start pigpiod
+pigpio
+
+# Adafruit Circuitpython zur Ansteuerung des PCA9685 PWM-Boards
+adafruit-circuitpython-pca9685
+adafruit-circuitpython-motor
+
+# PiCamera. Benötigt ebenfalls die Installation weiterer Pakete unter
+# Raspbian Linux mit folgenden Befehlen:
+#
+#   sudo apt install python3-libcamera python3-kms++
+#   sudo apt install python3-pyqt5 python3-prctl libatlas-base-dev ffmpeg libopenjp2-7
+#   sudo apt install libcap-dev
+#
+# Bei Problemen mit der Installation muss ggf. erst pip aktualisiert werden,
+# in dem bei aktiviertem Python-Environment folgender Befehl ausgeführt wird:
+#
+#   pip install --upgrade pip
+#
+# WICHTIG: Das Modul funktioniert aktuell (Januar 2023) nur, wenn das Python-Environment
+# mit folgendem Befehl angelegt wurde: python3 -m venv env --system-site-packages
+# Sehr unschöne Sache. Siehe Bug Report: https://github.com/raspberrypi/picamera2/issues/446
+picamera2
