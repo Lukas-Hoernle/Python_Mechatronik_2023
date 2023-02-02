@@ -1,6 +1,17 @@
 #! /usr/bin/env python3
 
+# https://docs.circuitpython.org/en/latest/shared-bindings/board/index.html
+# https://docs.circuitpython.org/en/latest/shared-bindings/busio/index.html
+# https://docs.circuitpython.org/projects/pca9685/en/latest/index.html
+import busio
+from board import SCL, SDA
+from adafruit_pca9685 import PCA9685
+
 from carbot.vehicle import Vehicle
+from carbot.sensors.obstacle import ObstacleSensor
+from carbot.sensors.direction import DirectionServo
+from carbot.drive import direction_change
+from carbot.drive.strategy import BackAndForthDrive, RandomDrive
 
 def main():
     """
@@ -20,8 +31,18 @@ def main():
     except:
         pass
 
+    # PCA9685-Baustein für die PWM-Steuerung der Motoren
+    i2c = busio.I2C(SCL, SDA)
+    pca = PCA9685(i2c)
+    pca.frequency = 60
+
     # Fahrzeug starten
-    vehicle = Vehicle()
-    vehicle.target_speed = 0.5
-    vehicle.direction = 0.2
+    vehicle = Vehicle(pca)
+
+    vehicle.add_sensor("obstacle", ObstacleSensor(trigger=20, echo=21, min_cm=10, max_cm=50))
+    vehicle.add_sensor("direction", DirectionServo(pca, pwmChannel=15))
+    vehicle.add_sensor("drive", RandomDrive(direction_change.onObstacle(vehicle, 0.9)))
+
+    # vehicle.target_speed = 0.5
+    # vehicle.direction = 0.2
     vehicle.loop_forever()

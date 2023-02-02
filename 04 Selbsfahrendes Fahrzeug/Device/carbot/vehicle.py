@@ -1,12 +1,4 @@
 import time
-
-# https://docs.circuitpython.org/en/latest/shared-bindings/board/index.html
-# https://docs.circuitpython.org/en/latest/shared-bindings/busio/index.html
-# https://docs.circuitpython.org/projects/pca9685/en/latest/index.html
-import busio
-from board import SCL, SDA
-from adafruit_pca9685 import PCA9685
-
 from carbot.motor import PCA9685Motor
 
 def clip(value, min_value, max_value):
@@ -33,15 +25,11 @@ class Vehicle:
     # Richtung [-1...1]: -1 = links, 0 = gerade aus, 1 = rechts
     direction: float = 0.0
 
-    def __init__(self):
+    def __init__(self, pca):
         """
-        Konstruktor.
+        Konstruktor. Parameter:
+            * pca: PCA9685-Objekt für die PWM-Steuerung
         """
-        # PCA9685-Baustein für die PWM-Steuerung der Motoren
-        i2c = busio.I2C(SCL, SDA)
-        pca = PCA9685(i2c)
-        pca.frequency = 60
-
         # Antriebsmotoren
         self._motor_left  = PCA9685Motor(pca, forward=24, backward=23, pwmChannel=0)
         self._motor_right = PCA9685Motor(pca, forward=22, backward=27, pwmChannel=1)
@@ -62,6 +50,13 @@ class Vehicle:
         """
         self._sensors.append(sensor)
         self._sensors_by_name[name] = sensor
+    
+    def get_sensor(self, name):
+        """
+        Sucht einen Sensor anhand seines Namens. Wirf einen `KeyError`, wenn
+        der Sensor nicht gefunden wurde.
+        """
+        return self._sensors_by_name[name]
 
     def loop_forever(self, update_frequency=10):
         """
@@ -90,7 +85,7 @@ class Vehicle:
             # Sensorwerte prüfen
             for sensor in self._sensors:
                 if hasattr(sensor, "is_active"):
-                    if not sensor.is_active():
+                    if not sensor.is_active:
                         continue
                 
                 if hasattr(sensor, "update"):
