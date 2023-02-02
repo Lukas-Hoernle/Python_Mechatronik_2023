@@ -34,6 +34,8 @@ def onObstacle(vehicle, max_pushback):
     """
     Richtungswechsel bei Hinderniss.
     """
+    yield True
+
     while True:
         if vehicle.obstacle_pushback >= max_pushback:
             yield True

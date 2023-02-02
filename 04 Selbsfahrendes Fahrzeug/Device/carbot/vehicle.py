@@ -97,7 +97,12 @@ class Vehicle:
             if self.target_speed > 0 and self.obstacle_pushback > 0 \
             or self.target_speed < 0 and self.obstacle_pushback < 0:
                 self._speed_total -= clip(self.obstacle_pushback, 0, 1)
-            
+
+            if self.target_speed > 0:
+                self.target_speed = max(self.target_speed, 0.4)
+            elif self.target_speed < 0:
+                self.target_speed = min(self.target_speed, -0.4)
+
             # Einzelgeschwindigkeiten anpassen für Lenkung
             self._speed_left  = self._speed_total
             self._speed_right = self._speed_total
@@ -120,7 +125,14 @@ class Vehicle:
             	
             self._motor_left.value  = self._speed_left
             self._motor_right.value = self._speed_right
-        
+    
+    def stop(self):
+        """
+        Motoren stoppen bei Programmende.
+        """
+        self._motor_left.value  = 0
+        self._motor_right.value = 0
+
     @property
     def speed_total(self):
         """

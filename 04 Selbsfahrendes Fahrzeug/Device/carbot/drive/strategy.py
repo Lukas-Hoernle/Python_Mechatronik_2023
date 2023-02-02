@@ -43,6 +43,7 @@ class RandomDrive(SensorBase):
         """
         super().__init__()
         self._direction_change = direction_change
+        print(f"is_active: {self.is_active}")
 
     def update(self, vehicle):
         """

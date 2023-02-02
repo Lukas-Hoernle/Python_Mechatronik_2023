@@ -41,8 +41,12 @@ def main():
 
     vehicle.add_sensor("obstacle", ObstacleSensor(trigger=20, echo=21, min_cm=10, max_cm=50))
     vehicle.add_sensor("direction", DirectionServo(pca, pwmChannel=15))
-    vehicle.add_sensor("drive", RandomDrive(direction_change.onObstacle(vehicle, 0.9)))
+    vehicle.add_sensor("drive", BackAndForthDrive(direction_change.onObstacle(vehicle, 0.9)))
 
-    # vehicle.target_speed = 0.5
-    # vehicle.direction = 0.2
-    vehicle.loop_forever()
+    #vehicle.target_speed = 0
+    #vehicle.direction = 0.2
+
+    try:
+        vehicle.loop_forever()
+    except KeyboardInterrupt:
+        vehicle.stop()
