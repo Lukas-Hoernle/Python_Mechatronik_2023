@@ -44,7 +44,7 @@ class Vehicle:
 
         # Antriebsmotoren
         self._motor_left  = PCA9685Motor(pca, forward=24, backward=23, pwmChannel=0)
-        self._motor_right = PCA9685Motor(pca, forward=22, backward=27, pwmChannel=0)
+        self._motor_right = PCA9685Motor(pca, forward=22, backward=27, pwmChannel=1)
 
         self._speed_total = 0.0
         self._speed_left  = 0.0
@@ -76,6 +76,9 @@ class Vehicle:
         prev_time_s = 0
         needed_delay_s = 0
 
+        prev_speed_left = 0.0
+        prev_speed_right = 0.0
+
         while True:
             # Thread pausieren, um CPU-Leistung einzusparen
             current_time_s = time.monotonic()
@@ -104,22 +107,21 @@ class Vehicle:
             self._speed_left  = self._speed_total
             self._speed_right = self._speed_total
 
-            if self._speed_total > 0:
+            if self._speed_total != 0:
                 if self.direction > 0:
                     # Richtung rechts: Rechten Motor verlangsamen, damit sich das Fehrzeug dreht
-                    self._speed_right -= self.direction
+                    self._speed_right *= 1 - self.direction
                 elif self.direction < 0:
                     # Richtung links: Linken Motor verlangsamen, damit sich das Fehrzeug dreht
-                    self._speed_left -= self.direction
-            elif self._speed_total < 0:
-                if self.direction > 0:
-                    # Richtung rechts: Rechten Motor verlangsamen, damit sich das Fehrzeug dreht
-                    self._speed_right += self.direction
-                elif self.direction < 0:
-                    # Richtung links: Linken Motor verlangsamen, damit sich das Fehrzeug dreht
-                    self._speed_left += self.direction
+                    self._speed_left *= 1 + self.direction
             
             # Berechnete Motorgeschwindigkeiten übernehmen
+            if self._speed_left != prev_speed_left \
+            or self._speed_right != prev_speed_right:
+            	prev_speed_left = self._speed_left
+            	prev_speed_right = self._speed_right
+            	print(f"Neue Motorgeschwindigkeiten: {self._speed_left}, {self._speed_right}")
+            	
             self._motor_left.value  = self._speed_left
             self._motor_right.value = self._speed_right
         

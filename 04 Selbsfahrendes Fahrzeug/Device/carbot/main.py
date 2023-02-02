@@ -13,4 +13,5 @@ def main():
 
     vehicle = Vehicle()
     vehicle.target_speed = 0.5
+    vehicle.direction = 0.2
     vehicle.loop_forever()
