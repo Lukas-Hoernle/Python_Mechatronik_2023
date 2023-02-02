@@ -40,6 +40,8 @@ PAGE = """\
 </html>
 """
 
+output = None
+
 class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
         self.frame = None
@@ -50,9 +52,10 @@ class StreamingOutput(io.BufferedIOBase):
             self.frame = buf
             self.condition.notify_all()
 
-
 class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
+        global output
+
         if self.path == '/':
             self.send_response(301)
             self.send_header('Location', '/index.html')
@@ -100,6 +103,8 @@ def main():
     """
     Hauptfunktion zum Starten des Servers.
     """
+    global output
+    
     picam2 = Picamera2()
 
     picam2_config = {
@@ -109,6 +114,8 @@ def main():
     picam2.configure(picam2.create_video_configuration(picam2_config, transform = Transform(vflip=True)))
     output = StreamingOutput()
     picam2.start_recording(JpegEncoder(), FileOutput(output))
+
+    print("Starte Webserver auf Port 8000")
 
     try:
         address = ('', 8000)
