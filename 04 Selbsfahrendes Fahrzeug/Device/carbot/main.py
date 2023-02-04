@@ -10,7 +10,7 @@ from adafruit_pca9685 import PCA9685
 from carbot.vehicle import Vehicle
 from carbot.sensors.obstacle import ObstacleSensor
 from carbot.sensors.direction import DirectionServo
-from carbot.drive import direction_change
+from carbot.drive.direction_change import any, randomInterval, onObstacle
 from carbot.drive.strategy import BackAndForthDrive, RandomDrive
 
 def main():
@@ -41,10 +41,7 @@ def main():
 
     vehicle.add_sensor("obstacle", ObstacleSensor(trigger=20, echo=21, min_cm=10, max_cm=50))
     vehicle.add_sensor("direction", DirectionServo(pca, pwmChannel=15))
-    vehicle.add_sensor("drive", BackAndForthDrive(direction_change.onObstacle(vehicle, 0.9)))
-
-    #vehicle.target_speed = 0
-    #vehicle.direction = 0.2
+    vehicle.add_sensor("drive", RandomDrive(any(onObstacle(vehicle, 0.9), randomInterval(3, 10))))
 
     try:
         vehicle.loop_forever()
