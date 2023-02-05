@@ -14,6 +14,10 @@ class Vehicle:
     Programms, in der mehrmals je Sekunde die Sensoren abgefragt und die
     Motorgeschwindigkeit entsprechend reguliert wird.
     """
+    # Erkannte Fahrbahnmarkierung unter dem Fahrzeug.
+    # Kann beim Selbstfahren ausgewertet werden, um einer Bodenlinie zu folgen.
+    line_pattern: tuple[int] = (0,0,0,0,0)
+
     # Zielgeschwindigkeit [-1...1]: -1 = rückwärts, 1 = vorwärts
     target_speed: float = 0.0
 
@@ -24,10 +28,6 @@ class Vehicle:
 
     # Richtung [-1...1]: -1 = links, 0 = gerade aus, 1 = rechts
     direction: float = 0.0
-
-    # Erkannte Fahrbahnmarkierung unter dem Fahrzeug.
-    # Kann beim Selbstfahren ausgewertet werden, um einer Bodenlinie zu folgen.
-    line_pattern: tuple[int] = (0,0,0,0,0)
 
     def __init__(self, pca):
         """
@@ -57,10 +57,28 @@ class Vehicle:
     
     def get_sensor(self, name):
         """
-        Sucht einen Sensor anhand seines Namens. Wirf einen `KeyError`, wenn
+        Sucht einen Sensor anhand seines Namens. Wirft einen `KeyError`, wenn
         der Sensor nicht gefunden wurde.
         """
         return self._sensors_by_name[name]
+    
+    @property
+    def sensor_status(self):
+        """
+        Gibt ein Dictionary mit einem Flag je Sensor zurück, ob der jeweilige
+        Sensor aktiv oder inaktiv ist.
+        """
+        sensor_status = {}
+
+        for name in self._sensors_by_name.keys():
+            sensor = self._sensors_by_name[name]
+
+            if hasattr(sensor, "is_active"):
+                sensor_status[name] = sensor.is_active
+            else:
+                sensor_status[name] = True
+
+        return sensor_status
 
     def loop_forever(self, update_frequency=10):
         """
@@ -125,7 +143,7 @@ class Vehicle:
                 prev_speed_left = self._speed_left
                 prev_speed_right = self._speed_right
                 
-                print(f"Neue Motorgeschwindigkeiten: {self._speed_total} -> Links={self._speed_left}, Rechts={self._speed_right}")
+                print(f"Neue Geschwindigkeit: {self._speed_total} -> Links={self._speed_left}, Rechts={self._speed_right}")
             	
             self._motor_left.value  = self._speed_left
             self._motor_right.value = self._speed_right

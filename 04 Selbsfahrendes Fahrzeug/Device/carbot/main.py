@@ -13,6 +13,7 @@ from carbot.sensors.direction import DirectionServo
 from carbot.sensors.line import LineSensor
 from carbot.drive.direction_change import any, randomInterval, onObstacle
 from carbot.drive.strategy import BackAndForthDrive, RandomDrive, FollowLineDrive
+from carbot.remote.udp import UDPRemoteControl
 
 def main():
     """
@@ -40,13 +41,13 @@ def main():
     # Fahrzeug starten
     vehicle = Vehicle(pca)
 
-    vehicle.add_sensor("line", LineSensor([5, 6, 13, 19, 26], line_color=LineSensor.BLACK))
-    vehicle.add_sensor("obstacle", ObstacleSensor(trigger=20, echo=21, min_cm=20, max_cm=80))
-    vehicle.add_sensor("direction", DirectionServo(pca, pwmChannel=15))
+    vehicle.add_sensor("sensor:line", LineSensor([5, 6, 13, 19, 26], line_color=LineSensor.BLACK))
+    vehicle.add_sensor("sensor:obstacle", ObstacleSensor(trigger=20, echo=21, min_cm=20, max_cm=80))
+    vehicle.add_sensor("sensor:direction", DirectionServo(pca, pwmChannel=15))
     vehicle.add_sensor("drive:random", RandomDrive(any(onObstacle(vehicle, 0.75), randomInterval(10, 30))))
-    #vehicle.add_sensor("drive:random", RandomDrive(onObstacle(vehicle, 0.75)))
     vehicle.add_sensor("drive:backforth", BackAndForthDrive(any(onObstacle(vehicle, 0.9), randomInterval(5, 15))))
     vehicle.add_sensor("drive:line", FollowLineDrive())
+    vehicle.add_sensor("remote:udp", UDPRemoteControl("", 8888))
 
     #vehicle.get_sensor("drive:random").disable()
     vehicle.get_sensor("drive:backforth").disable()
