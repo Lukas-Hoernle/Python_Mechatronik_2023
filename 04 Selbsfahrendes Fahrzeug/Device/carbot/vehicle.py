@@ -25,6 +25,10 @@ class Vehicle:
     # Richtung [-1...1]: -1 = links, 0 = gerade aus, 1 = rechts
     direction: float = 0.0
 
+    # Erkannte Fahrbahnmarkierung unter dem Fahrzeug.
+    # Kann beim Selbstfahren ausgewertet werden, um einer Bodenlinie zu folgen.
+    line_pattern: tuple[int] = (0,0,0,0,0)
+
     def __init__(self, pca):
         """
         Konstruktor. Parameter:
