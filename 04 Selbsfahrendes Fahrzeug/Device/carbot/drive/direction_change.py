@@ -47,6 +47,8 @@ def randomInterval(min_seconds, max_seconds):
 
         if (curr_time - prev_time) >= seconds:
             seconds = random.randrange(min_seconds, max_seconds)
+            prev_time = curr_time
+            print(f"Nächster Richtungswechsel spätestens in {seconds} Sekunden")
             yield True
         else:
             yield False

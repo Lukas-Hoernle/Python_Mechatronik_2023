@@ -55,12 +55,13 @@ class RandomDrive(SensorBase):
         
         if change:
             vehicle.direction = (random.randint(0, 10) - 5) / 10.0
-            speed = random.randint(0, 10) / 10.0
-
-            if vehicle.target_speed >= 0:
-                vehicle.target_speed = speed * -1
-            else:
-                vehicle.target_speed = speed
+            speed = random.randint(4, 10) / 10.0
+            vehicle.target_speed = speed
+            
+            #if vehicle.target_speed >= 0:
+            #    vehicle.target_speed = speed * -1
+            #else:
+            #    vehicle.target_speed = speed
 
 class FollowLineDrive(SensorBase):
     """

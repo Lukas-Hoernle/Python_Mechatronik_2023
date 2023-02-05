@@ -102,10 +102,10 @@ class Vehicle:
             or self.target_speed < 0 and self.obstacle_pushback < 0:
                 self._speed_total -= clip(self.obstacle_pushback, 0, 1)
 
-            if self.target_speed > 0:
-                self.target_speed = max(self.target_speed, 0.4)
-            elif self.target_speed < 0:
-                self.target_speed = min(self.target_speed, -0.4)
+            if self._speed_total > 0:
+                self._speed_total = max(self._speed_total, 0.4)
+            elif self._speed_total < 0:
+                self._speed_total = min(self._speed_total, -0.4)
 
             # Einzelgeschwindigkeiten anpassen für Lenkung
             self._speed_left  = self._speed_total
@@ -125,7 +125,7 @@ class Vehicle:
                 prev_speed_left = self._speed_left
                 prev_speed_right = self._speed_right
                 
-                print(f"Neue Motorgeschwindigkeiten: {self._speed_left}, {self._speed_right}")
+                print(f"Neue Motorgeschwindigkeiten: {self._speed_total} -> Links={self._speed_left}, Rechts={self._speed_right}")
             	
             self._motor_left.value  = self._speed_left
             self._motor_right.value = self._speed_right
