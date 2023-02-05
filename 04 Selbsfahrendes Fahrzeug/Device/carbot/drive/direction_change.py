@@ -1,6 +1,6 @@
 import random, time
 
-def any(**strategies):
+def any(*strategies):
     """
     Kombination aus mehreren Strategien, zum Beispiel:
     

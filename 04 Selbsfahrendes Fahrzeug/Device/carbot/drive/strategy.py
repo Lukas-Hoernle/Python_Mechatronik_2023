@@ -91,7 +91,7 @@ class FollowLineDrive(SensorBase):
         if self._backward_speed > 1:
             self._backward_speed *= -1
 
-        self.status = STATUS_DRIVING
+        self.status = self.STATUS_DRIVING
 
     def update(self, vehicle):
         """

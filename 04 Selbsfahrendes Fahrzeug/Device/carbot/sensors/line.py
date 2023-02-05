@@ -23,7 +23,7 @@ class LineSensor(SensorBase):
         self._sensors = []
 
         for pin in pins:
-            self._sensors.append(LineSensor(pin))
+            self._sensors.append(LineSensor_(pin))
 
     def update(self, vehicle):
         """
