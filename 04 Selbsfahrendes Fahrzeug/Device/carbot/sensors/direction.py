@@ -26,4 +26,4 @@ class DirectionServo(SensorBase):
         Zahl [-1...1] gesteuert und hier in einen Winkel von [10°-170°]
         umgerechnet.
         """
-        self._servo.angle = ((vehicle.direction + 1) * 80) + 10
+        self._servo.angle = (((vehicle.direction * -1) + 1) * 80) + 10

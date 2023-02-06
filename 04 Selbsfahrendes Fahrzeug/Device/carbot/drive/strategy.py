@@ -43,6 +43,7 @@ class RandomDrive(SensorBase):
         """
         super().__init__()
         self._direction_change = direction_change
+        self._prev_direction = 0
 
     def update(self, vehicle):
         """
@@ -55,13 +56,15 @@ class RandomDrive(SensorBase):
         
         if change:
             vehicle.direction = (random.randint(0, 10) - 5) / 10.0
+
+            if self._prev_direction < 0 and vehicle.direction < 0 \
+            or self._prev_direction > 0 and vehicle.direction > 0:
+            	vehicle.direction *= -1
+
+            self._prev_direction = vehicle.direction
+            
             speed = random.randint(4, 10) / 10.0
             vehicle.target_speed = speed
-            
-            #if vehicle.target_speed >= 0:
-            #    vehicle.target_speed = speed * -1
-            #else:
-            #    vehicle.target_speed = speed
 
 class FollowLineDrive(SensorBase):
     """

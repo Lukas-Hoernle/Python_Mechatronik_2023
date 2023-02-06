@@ -111,20 +111,22 @@ class UDPRemoteControl(SensorBase):
                     data, address = socket_.recvfrom(self._BUFFER_SIZE)
                     command = json.loads(data)
 
-                    match command:
-                        case {"cmd": cmd} if cmd == "vehicle_status":
-                            # Abfrage des Fahrzeugstatus direkt beantworten
-                            with self._status_lock:
-                                response = json.dumps(self._vehicle_status)
-                                socket_.sendto(response, address)
-                        case {"cmd": cmd} if cmd == "sensor_status":
-                            # Abfrage des Sensorstatus direkt beantworten
-                            with self._status_lock:
-                                response = json.dumps(self._sensor_status)
-                                socket_.sendto(response, address)
-                        case _:
-                            # Alle anderen Steuerbefehle im Fahrzeug-Thread bearbeiten
-                            self._pending_commands.push(command)
+                    if not hasattr(command, "cmd"):
+                        continue
+
+                    if command.cmd == "vehicle_status":
+                        # Abfrage des Fahrzeugstatus direkt beantworten
+                        with self._status_lock:
+                            response = json.dumps(self._vehicle_status)
+                            socket_.sendto(response, address)
+                    elif command.cmd == "sensor_status":
+                        # Abfrage des Sensorstatus direkt beantworten
+                        with self._status_lock:
+                            response = json.dumps(self._sensor_status)
+                            socket_.sendto(response, address)
+                    else:
+                        # Alle anderen Steuerbefehle im Fahrzeug-Thread bearbeiten
+                        self._pending_commands.push(command)
                 except OSError as err:
                     if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
                         sockets_without_data += 1
@@ -149,7 +151,7 @@ class UDPRemoteControl(SensorBase):
                 "line_pattern":      vehicle.line_pattern,
                 "target_speed":      vehicle.target_speed,
                 "obstacle_pushback": vehicle.obstacle_pushback,
-                "direction":         vehicle.direction,            
+                "direction":         vehicle.direction,
                 "speed_total":       vehicle.speed_total,
                 "speed_left":        vehicle.speed_left,
                 "speed_right":       vehicle.speed_right,
@@ -166,24 +168,30 @@ class UDPRemoteControl(SensorBase):
             except IndexError:
                 break
 
-            match command:
-                case {"cmd": cmd, "attr": attr, "value": target_speed} if cmd == "set" and attr == "target_speed":
-                    # Zielgeschwindigkeit ändern
-                    vehicle.target_speed = target_speed
-                case {"cmd": cmd, "attr": attr, "value": direction} if cmd == "set" and attr == "direction":
-                    # Fahrtrichtung ändern
-                    vehicle.direction = direction
-                case {"cmd": cmd, "name": sensor_name} if cmd == "enable_sensor":
-                    # Sensor aktivieren
-                    try:
-                        sensor = vehicle.get_sensor(sensor_name)
-                        sensor.enable()
-                    except:
-                        pass
-                case {"cmd": cmd, "name": sensor_name} if cmd == "disable_sensor":
-                    # Sensor deaktivieren
-                    try:
-                        sensor = vehicle.get_sensor(sensor_name)
-                        sensor.disable()
-                    except:
-                        pass
+            if hasattr(command, "attr") and hasattr(command, "value"):
+                pass
+            elif hasattr(command, "name"):
+                pass
+
+# TODO: Anpassen, Python 3.9 kennt noch kein match case
+#            match command:
+#                case {"cmd": cmd, "attr": attr, "value": target_speed} if cmd == "set" and attr == "target_speed":
+#                    # Zielgeschwindigkeit ändern
+#                    vehicle.target_speed = target_speed
+#                case {"cmd": cmd, "attr": attr, "value": direction} if cmd == "set" and attr == "direction":
+#                    # Fahrtrichtung ändern
+#                    vehicle.direction = direction
+#                case {"cmd": cmd, "name": sensor_name} if cmd == "enable_sensor":
+#                    # Sensor aktivieren
+#                    try:
+#                        sensor = vehicle.get_sensor(sensor_name)
+#                        sensor.enable()
+#                    except:
+#                        pass
+#                case {"cmd": cmd, "name": sensor_name} if cmd == "disable_sensor":
+#                    # Sensor deaktivieren
+#                    try:
+#                        sensor = vehicle.get_sensor(sensor_name)
+#                        sensor.disable()
+#                    except:
+#                        pass

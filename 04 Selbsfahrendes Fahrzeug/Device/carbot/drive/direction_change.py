@@ -1,5 +1,45 @@
 import random, time
 
+def print_change(strategy):
+    """
+    Protokollzeile auf der Konsole, wenn die Strategie einen
+    Richtungswechsel auslöst.
+    """
+    while True:
+        try:
+            change = strategy.__next__()
+        except:
+            pass
+
+        if change:
+            print("Änderung der Fahrtrichtung")
+
+        yield change
+
+def limit(strategy, not_before_s=1):
+    """
+    Sicherstellen, dass nicht öfters als einmal alle N Sekunden
+    ein Richtungswechsel erfolgt.
+    """
+    prev_change_time = 0
+
+    while True:
+        curr_time = time.monotonic()
+        
+        try:
+            change = strategy.__next__()
+        except:
+            pass
+
+        if change:
+            if curr_time - prev_change_time < not_before_s:
+                yield False
+            else:
+                prev_change_time = curr_time
+                yield True
+        else:
+            yield False
+
 def any(*strategies):
     """
     Kombination aus mehreren Strategien, zum Beispiel:
@@ -21,7 +61,7 @@ def any(*strategies):
         
         yield change
 
-def fixedInterval(seconds):
+def fixed_interval(seconds):
     """
     Richtungswechsel nach festem Zeitintervall.
     """
@@ -35,7 +75,7 @@ def fixedInterval(seconds):
         else:
             yield False
 
-def randomInterval(min_seconds, max_seconds):
+def random_interval(min_seconds, max_seconds):
     """
     Richtungswechsel nach zufälligem Zeitintervall.
     """
@@ -53,7 +93,7 @@ def randomInterval(min_seconds, max_seconds):
         else:
             yield False
 
-def onObstacle(vehicle, max_pushback):
+def on_obstacle(vehicle, max_pushback):
     """
     Richtungswechsel bei Hinderniss.
     """
