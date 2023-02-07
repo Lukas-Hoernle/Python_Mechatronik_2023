@@ -168,30 +168,36 @@ class UDPRemoteControl(SensorBase):
             except IndexError:
                 break
 
-            if hasattr(command, "attr") and hasattr(command, "value"):
-                pass
-            elif hasattr(command, "name"):
-                pass
-
-# TODO: Anpassen, Python 3.9 kennt noch kein match case
-#            match command:
-#                case {"cmd": cmd, "attr": attr, "value": target_speed} if cmd == "set" and attr == "target_speed":
-#                    # Zielgeschwindigkeit ändern
-#                    vehicle.target_speed = target_speed
-#                case {"cmd": cmd, "attr": attr, "value": direction} if cmd == "set" and attr == "direction":
-#                    # Fahrtrichtung ändern
-#                    vehicle.direction = direction
-#                case {"cmd": cmd, "name": sensor_name} if cmd == "enable_sensor":
-#                    # Sensor aktivieren
-#                    try:
-#                        sensor = vehicle.get_sensor(sensor_name)
-#                        sensor.enable()
-#                    except:
-#                        pass
-#                case {"cmd": cmd, "name": sensor_name} if cmd == "disable_sensor":
-#                    # Sensor deaktivieren
-#                    try:
-#                        sensor = vehicle.get_sensor(sensor_name)
-#                        sensor.disable()
-#                    except:
-#                        pass
+            command_ = {
+                "cmd": getattr(command, "cmd", ""),
+                "attr": getattr(command, "attr", ""),
+                "value": getattr(command, "value", ""),
+                "name": getattr(command, "name", ""),
+            }
+            
+            if command_.cmd == "set" and command_.attr == "target_speed":
+                # Zielgeschwindigkeit ändern
+                try:
+                    vehicle.target_speed = int(command_.value)
+                except ValueError:
+                    pass
+            elif command_.cmd == "set" and command_.attr == "direction":
+                # Fahrtrichtung ändern
+                try:
+                    vehicle.direction = int(command_.value)
+                except ValueError:
+                    pass
+            elif command_.cmd == "enable_sensor":
+                # Sensor aktivieren
+                try:
+                    sensor = vehicle.get_sensor(command_.name)
+                    sensor.enable()
+                except:
+                    pass
+            elif command_.cmd == "disable_sensor":
+                # Sensor deaktivieren
+                try:
+                    sensor = vehicle.get_sensor(command_.name)
+                    sensor.disable()
+                except:
+                    pass
