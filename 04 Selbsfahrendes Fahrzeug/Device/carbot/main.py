@@ -7,6 +7,7 @@ import busio
 from board import SCL, SDA
 from adafruit_pca9685 import PCA9685
 
+from carbot.motor import PCA9685Motor
 from carbot.vehicle import Vehicle
 from carbot.sensors.obstacle import ObstacleSensor
 from carbot.sensors.direction import DirectionServo
@@ -39,7 +40,10 @@ def main():
     pca.frequency = 60
 
     # Fahrzeug starten
-    vehicle = Vehicle(pca)
+    motor_left  = PCA9685Motor(pca, forward=24, backward=23, pwmChannel=0)
+    motor_right = PCA9685Motor(pca, forward=22, backward=27, pwmChannel=1)
+
+    vehicle = Vehicle(motor_left, motor_right)
 
     vehicle.add_sensor("sensor:line", LineSensor([5, 6, 13, 19, 26], line_color=LineSensor.BLACK))
     vehicle.add_sensor("sensor:obstacle", ObstacleSensor(trigger=20, echo=21, min_cm=20, max_cm=80))

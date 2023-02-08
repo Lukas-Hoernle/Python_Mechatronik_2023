@@ -1,5 +1,4 @@
 import time
-from carbot.motor import PCA9685Motor
 
 def clip(value, min_value, max_value):
     """
@@ -29,14 +28,15 @@ class Vehicle:
     # Richtung [-1...1]: -1 = links, 0 = gerade aus, 1 = rechts
     direction: float = 0.0
 
-    def __init__(self, pca):
+    def __init__(self, motor_left, motor_right):
         """
         Konstruktor. Parameter:
-            * pca: PCA9685-Objekt für die PWM-Steuerung
+            * motor_left: gpiozero.Motor-ähnliches Objekt für den linken Fahrmotor
+            * motor_right: gpiozero.Motor-ähnliches Objekt für den rechten Fahrmotor
         """
         # Antriebsmotoren
-        self._motor_left  = PCA9685Motor(pca, forward=24, backward=23, pwmChannel=0)
-        self._motor_right = PCA9685Motor(pca, forward=22, backward=27, pwmChannel=1)
+        self._motor_left  = motor_left
+        self._motor_right = motor_right
 
         self._speed_total = 0.0
         self._speed_left  = 0.0
