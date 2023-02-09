@@ -38,7 +38,7 @@ class RandomDrive(SensorBase):
     """
     def __init__(self, direction_change):
         """
-        Konsturktor. Parameter:
+        Konstruktor. Parameter:
             * direction_change: Funktion zum Prüfen auf Richtungswechsel
         """
         super().__init__()

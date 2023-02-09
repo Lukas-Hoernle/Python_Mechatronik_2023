@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 # https://docs.circuitpython.org/en/latest/shared-bindings/board/index.html
 # https://docs.circuitpython.org/en/latest/shared-bindings/busio/index.html
 # https://docs.circuitpython.org/projects/pca9685/en/latest/index.html

@@ -1,11 +1,4 @@
-import asyncio, time
-
-def clip(value, min_value, max_value):
-    """
-    Hilfsfunktion, die sicherstellt, dass das übergebene Wert innerhalb
-    des angegebenen Bereichs bleibt.
-    """
-    return min(max(value, min_value), max_value)
+from carbot_sim.utils import clip
 
 class Vehicle:
     """
@@ -42,38 +35,47 @@ class Vehicle:
         self._speed_left  = 0.0
         self._speed_right = 0.0
     
-    async def drive(self, update_frequency=2):
+        # Tasks für die Fahrzeugfunktionen
+        self._tasks = {}
+
+    def add_task(self, name, task):
+        """
+        Fügt einen dauerhaft laufenden Task dem Fahrzeugobjekt hinzu und
+        startet den Task.
+        """
+        self._tasks[name] = task
+        
+        if not task.task:
+            task.run()
+    
+    def get_task(self, name):
+        """
+        Sucht einen Task anhand seines Namens. Wirft einen `KeyError`, wenn
+        der Task nicht gefunden wurde.
+        """
+        return self._tasks[name]
+    
+    async def drive(self, update_frequency):
         """
         Task-Routine (genauer gesagt „asynchrone Co-Routine für einen Task”)
         zur Steuerung des Fahrzeugs. Dieser Task wertet die Fahrzeugparameter
         aus und übersetzt sie in Steueranweisungen für die Antriebsmotoren.
 
         Parameter:
-            * update_frequency: Anzahl der Kurskorrekturen je Sekunde.
+            * update_frequency: UpdateFrequency-Objekt zur Bestimmung der Anzahl
+              Kurskorrekturen je Sekunde
         """
-        target_delay_s = 1 / update_frequency
-        prev_time_s = 0
-        needed_delay_s = 0
-
         while True:
             # Task pausieren, damit andere Tasks auch laufen können
-            current_time_s = time.monotonic()
-            needed_delay_s = target_delay_s - (current_time_s - prev_time_s)
-
-            if needed_delay_s > 0:
-                asyncio.sleep(needed_delay_s)
+            await update_frequency.sleep()
 
             # Angestrebte Geschwindigkeit einstellen
-            self._speed_total = clip(self.target_speed, -1, 1)
-
-            if self.target_speed > 0 and self.obstacle_pushback > 0 \
-            or self.target_speed < 0 and self.obstacle_pushback < 0:
-                self._speed_total -= clip(self.obstacle_pushback, 0, 1)
+            self._speed_total = clip(self.target_speed, -1, 1) - clip(self.obstacle_pushback, -1, 1)
 
             if self._speed_total > 0:
-                self._speed_total = max(self._speed_total, 0.4)
+                self._speed_total = clip(self._speed_total, 0.4, 1)
             elif self._speed_total < 0:
-                self._speed_total = min(self._speed_total, -0.4)
+                self._speed_total = clip(self._speed_total, -1, -0.4)
 
             # Einzelgeschwindigkeiten anpassen für Lenkung
             self._speed_left  = self._speed_total
@@ -81,10 +83,10 @@ class Vehicle:
 
             if self._speed_total != 0:
                 if self.direction > 0:
-                    # Richtung rechts: Rechten Motor verlangsamen, damit sich das Fehrzeug dreht
+                    # Richtung rechts: Rechten Motor verlangsamen, damit sich das Fahrzeug dreht
                     self._speed_right *= 1 - self.direction
                 elif self.direction < 0:
-                    # Richtung links: Linken Motor verlangsamen, damit sich das Fehrzeug dreht
+                    # Richtung links: Linken Motor verlangsamen, damit sich das Fahrzeug dreht
                     self._speed_left *= 1 + self.direction
 
             # Berechnete Motorgeschwindigkeiten übernehmen

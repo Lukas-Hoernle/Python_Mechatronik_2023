@@ -128,10 +128,10 @@ class Vehicle:
 
             if self._speed_total != 0:
                 if self.direction > 0:
-                    # Richtung rechts: Rechten Motor verlangsamen, damit sich das Fehrzeug dreht
+                    # Richtung rechts: Rechten Motor verlangsamen, damit sich das Fahrzeug dreht
                     self._speed_right *= 1 - self.direction
                 elif self.direction < 0:
-                    # Richtung links: Linken Motor verlangsamen, damit sich das Fehrzeug dreht
+                    # Richtung links: Linken Motor verlangsamen, damit sich das Fahrzeug dreht
                     self._speed_left *= 1 + self.direction
 
             if self.obstacle_pushback != 0:

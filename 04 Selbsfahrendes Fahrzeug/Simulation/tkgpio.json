@@ -1,7 +1,7 @@
 {
     "name": "Carbot: tkgui-Simulation",
     "width": 700,
-    "height": 500,
+    "height": 640,
     "labels": [
         {
             "x": 20,
@@ -41,6 +41,19 @@
             "x": 320,
             "y": 348,
             "text": "Antrieb"
+        },
+        {
+            "x": 20,
+            "y": 490,
+            "width": 65,
+            "height": 6,
+            "borderwidth": 2,
+            "relief": "solid"
+        },
+        {
+            "x": 320,
+            "y": 478,
+            "text": "Steuerung"
         }
     ],
     "distance_sensors": [
@@ -105,6 +118,14 @@
             "pin": 26,
             "off_label": "0",
             "on_label": "1"
+        },
+        {
+            "x": 270,
+            "y": 540,
+            "name": "",
+            "pin": 26,
+            "off_label": "Manuelle Steuerung",
+            "on_label": "Autonomes Fahren"
         }
     ],
     "motors": [
@@ -122,5 +143,44 @@
             "forward_pin": 22,
             "backward_pin": 27
         }
+    ],
+    "buttons": [
+        {
+            "x": 40,
+            "y": 515,
+            "name": "⬉",
+            "pin": 7
+        },
+        {
+            "x": 90,
+            "y": 515,
+            "name": "▲",
+            "pin": 8
+        },
+        {
+            "x": 140,
+            "y": 515,
+            "name": "⬈",
+            "pin": 9
+        },
+        {
+            "x": 40,
+            "y": 565,
+            "name": "⬋",
+            "pin": 10
+        },
+        {
+            "x": 90,
+            "y": 565,
+            "name": "▼",
+            "pin": 11
+        },
+        {
+            "x": 140,
+            "y": 565,
+            "name": "⬊",
+            "pin": 12
+        }
+
     ]
 }

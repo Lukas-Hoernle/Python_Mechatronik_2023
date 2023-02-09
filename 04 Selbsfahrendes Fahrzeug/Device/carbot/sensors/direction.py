@@ -13,7 +13,7 @@ class DirectionServo(SensorBase):
 
             * pca: PCA9685-Objekt für die PWM-Steuerung
             * pwmChannel: PWM-Kanal zur Ausrichtung des Servos
-            * min_pulse: Puledauer für Position ganz links
+            * min_pulse: Pulsdauer für Position ganz links
             * max_pulse: Pulsdauer für Position ganz rechts
         """
         super().__init__()

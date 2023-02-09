@@ -12,6 +12,8 @@ Bausatz ausgelegt und berücksichtigt daher folgende Besonderheiten:
  * Optional eine PiCamera auf dem Fahrzeug
  * Ein fünf-facher Infrarot-LineSensor
 
+![Foto](foto.jpg)
+
 Die Hardwarekonfiguration ist vollständig in der Datei `carbot/main.py` gekapselt,
 so dass die Programmierung leicht an andere Bausätze angepasst werden kann. In
 vielen Fällen müssen nur die Pin-Nummern beim Erzeugen der Sensor-Objekte angepasst
