@@ -11,8 +11,9 @@ from carbot_sim.main import main
 
 if __name__ == "__main__":
     try:
+	# HINWEIS: Unter Windows die Datei tkgpio_windows.json eintragen
         file_path = os.path.dirname(__file__)
-        file_path = os.path.join(file_path, "tkgpio.json")
+        file_path = os.path.join(file_path, "tkgpio_linux.json")
 
         with open(file_path) as json_file:
             config = json.load(json_file)
