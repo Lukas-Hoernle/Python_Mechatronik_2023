@@ -27,3 +27,4 @@ class DirectionServo(SensorBase):
         umgerechnet.
         """
         self._servo.angle = (((vehicle.direction * -1) + 1) * 80) + 10
+

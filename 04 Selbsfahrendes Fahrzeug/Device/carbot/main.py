@@ -44,7 +44,7 @@ def main():
     vehicle = Vehicle(motor_left, motor_right)
 
     vehicle.add_sensor("sensor:line", LineSensor([5, 6, 13, 19, 26], line_color=LineSensor.BLACK))
-    vehicle.add_sensor("sensor:obstacle", ObstacleSensor(trigger=20, echo=21, min_cm=20, max_cm=80))
+    vehicle.add_sensor("sensor:obstacle", ObstacleSensor(trigger=20, echo=21, min_cm=10, max_cm=100))
     vehicle.add_sensor("sensor:direction", DirectionServo(pca, pwmChannel=15))
     vehicle.add_sensor("drive:random", RandomDrive(print_change(limit(any(on_obstacle(vehicle, 0.75), random_interval(10, 30))))))
     vehicle.add_sensor("drive:backforth", BackAndForthDrive(print_change(limit(any(on_obstacle(vehicle, 0.9), random_interval(10, 30))))))

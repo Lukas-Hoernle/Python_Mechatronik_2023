@@ -111,8 +111,9 @@ class Vehicle:
                     sensor.update(self)
             
             # Angestrebte Geschwindigkeit einstellen
+            prev_speed_total = self._speed_total
             self._speed_total = clip(self.target_speed, -1, 1)
-
+            
             if self.target_speed > 0 and self.obstacle_pushback > 0 \
             or self.target_speed < 0 and self.obstacle_pushback < 0:
                 self._speed_total -= clip(self.obstacle_pushback, 0, 1)
@@ -121,6 +122,14 @@ class Vehicle:
                 self._speed_total = max(self._speed_total, 0.4)
             elif self._speed_total < 0:
                 self._speed_total = min(self._speed_total, -0.4)
+
+            # Richtung umkehren, wenn einem Hinderniss ausgewichen wird
+            if prev_speed_total > 0 and self._speed_total < 0 \
+            or prev_speed_total < 0 and self._speed_total > 0:
+                self.direction *= -1
+
+                if self.direction >= -0.3 and self.direction <= 0.3:
+                    self.direction = clip(self.direction + 0.5, -1, 1)
 
             # Einzelgeschwindigkeiten anpassen für Lenkung
             self._speed_left  = self._speed_total
