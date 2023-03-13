@@ -22,6 +22,8 @@ class SoundPlayer(SensorBase):
          * player: Kommando zum Abspielen eines Soundfiles (Default: "aplay")
          * media_dir: Verzeichnis mit den Audiodateien (Default: Unterverzeichnis "media")
         """
+        super().__init__()
+
         self._player    = shutil.which(player)
         self._media_dir = media_dir
         

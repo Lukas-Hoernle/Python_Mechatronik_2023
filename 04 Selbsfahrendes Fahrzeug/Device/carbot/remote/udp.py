@@ -69,7 +69,9 @@ class UDPRemoteControl(SensorBase):
         aus dem dazugehörigen IP-Netz (bei "localhost" also nur von der eigenen Maschine) erreicht
         werden.
         """
-        self._host = host
+        super().__init__()
+
+        self._host = host or None
         self._port = port
 
         self._pending_commands = collections.deque()
@@ -82,7 +84,7 @@ class UDPRemoteControl(SensorBase):
         self._server_thread    = threading.Thread(target=self._server_thread_loop)
 
         self._server_thread.setDaemon(True)
-        self._server_thread.run()
+        self._server_thread.start()
     
     def _server_thread_loop(self):
         """
@@ -182,14 +184,17 @@ class UDPRemoteControl(SensorBase):
         
             # Soundplayer-Objekt merken und ggf. verfügbare Sounds einlesen, wenn der Player aktiviert wird
             if not self._sound_player:
-                sound_player = self._vehicle.get_sensor("sound:player")
+                try:
+                    sound_player = vehicle.get_sensor("sound:player")
+                except KeyError:
+                    sound_player = None
 
-                if sound_player and sound_player.is_active():
+                if sound_player and sound_player.is_active:
                     self._sound_player     = sound_player
                     self._available_sounds = self._sound_player.soundfiles
                     self._playing_sounds   = self._sound_player.playing
             else:
-                if self._sound_player.is_active():
+                if self._sound_player.is_active:
                     self._playing_sounds = self._sound_player.playing
                 else:
                     self._sound_player     = None

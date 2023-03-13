@@ -50,8 +50,8 @@ def main():
     vehicle.add_sensor("drive:random", RandomDrive(print_change(limit(any(on_obstacle(vehicle, 0.75), random_interval(10, 30))))))
     vehicle.add_sensor("drive:backforth", BackAndForthDrive(print_change(limit(any(on_obstacle(vehicle, 0.9), random_interval(10, 30))))))
     vehicle.add_sensor("drive:line", FollowLineDrive())
-    vehicle.add_sensor("remote:udp", UDPRemoteControl("", 8888))
     vehicle.add_sensor("sound:player", SoundPlayer())
+    vehicle.add_sensor("remote:udp", UDPRemoteControl("", 9876))
 
     #vehicle.get_sensor("drive:random").disable()
     vehicle.get_sensor("drive:backforth").disable()
