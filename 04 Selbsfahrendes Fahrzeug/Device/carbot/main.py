@@ -13,6 +13,7 @@ from carbot.sensors.line import LineSensor
 from carbot.drive.direction_change import any, limit, random_interval, on_obstacle, print_change
 from carbot.drive.strategy import BackAndForthDrive, RandomDrive, FollowLineDrive
 from carbot.remote.udp import UDPRemoteControl
+from carbot.sound.player import SoundPlayer
 
 def main():
     """
@@ -50,6 +51,7 @@ def main():
     vehicle.add_sensor("drive:backforth", BackAndForthDrive(print_change(limit(any(on_obstacle(vehicle, 0.9), random_interval(10, 30))))))
     vehicle.add_sensor("drive:line", FollowLineDrive())
     vehicle.add_sensor("remote:udp", UDPRemoteControl("", 8888))
+    vehicle.add_sensor("sound:player", SoundPlayer())
 
     #vehicle.get_sensor("drive:random").disable()
     vehicle.get_sensor("drive:backforth").disable()

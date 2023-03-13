@@ -20,6 +20,7 @@ class UDPRemoteControl(SensorBase):
         * Richtung ändern
         * Vorhandene Sensoren abfragen
         * Sensor aktivieren/deaktivieren
+        * Soundfile abspielen/stoppen
     
     Die Kommandos werden als UTF-8 kodiertes JSON-Objekt der Form `{"cmd": "...", ...}`
     übertragen, wobei auf die meisten Kommandos keine Antwort erfolgt.
@@ -30,6 +31,8 @@ class UDPRemoteControl(SensorBase):
         * `{"cmd": "set", "attr": "direction", "value": 0}`
         * `{"cmd": "enable_sensor", "name": "…"}`
         * `{"cmd": "disable_sensor", "name": "…"}`
+        * `{"cmd": "soundplayer", "action": "play", "soundfile": "…"}`
+        * `{"cmd": "soundplayer", "action": "stop", "soundfile": "…"}`
     
     Kommandos mit direkter Antwort:
 
@@ -38,6 +41,12 @@ class UDPRemoteControl(SensorBase):
 
         * `{"cmd": "sensor_status"}`
           liefert als Antwort ein Objekt mit den Sensornamen und einem Aktiv-Flag.
+        
+        * `{"cmd": "soundplayer", "action": "get_soundfiles"}`
+          liefert als Antwort eine Liste mit den Namen der verfügbaren Sounds.
+
+        * `{"cmd": "soundplayer", "action": "get_playing"}`
+          liefert als Antwort eine Liste mit den Namen der gerade wiedergegebenen Sounds.
     
     Die Nachrichten in beide Richtungen dürfen nicht größer als 4096 Bytes sein.
     """
@@ -66,6 +75,9 @@ class UDPRemoteControl(SensorBase):
         self._pending_commands = collections.deque()
         self._vehicle_status   = {}
         self._sensor_status    = {}
+        self._sound_player     = None
+        self._available_sounds = []
+        self._playing_sounds   = []
         self._status_lock      = threading.Lock()
         self._server_thread    = threading.Thread(target=self._server_thread_loop)
 
@@ -124,9 +136,17 @@ class UDPRemoteControl(SensorBase):
                         with self._status_lock:
                             response = json.dumps(self._sensor_status)
                             socket_.sendto(response, address)
+                    elif command.cmd == "soundplayer" and command.action == "get_soundfiles":
+                        with self._status_lock:
+                            response = json.dumps(self._available_sounds)
+                            socket_.sendto(response, address)
+                    elif command.cmd == "soundplayer" and command.action == "get_playing":
+                        with self._status_lock:
+                            response = json.dumps(self._playing_sounds)
+                            socket_.sendto(response, address)
                     else:
                         # Alle anderen Steuerbefehle im Fahrzeug-Thread bearbeiten
-                        self._pending_commands.push(command)
+                        self._pending_commands.append(command)
                 except OSError as err:
                     if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
                         sockets_without_data += 1
@@ -147,6 +167,7 @@ class UDPRemoteControl(SensorBase):
         """
         # Aktuellen Fahrzeugstatus merken
         if self._status_lock.acquire(blocking=False):
+            # Fahrzeugstatus ermitteln
             self._vehicle_status = {
                 "line_pattern":      vehicle.line_pattern,
                 "target_speed":      vehicle.target_speed,
@@ -158,9 +179,26 @@ class UDPRemoteControl(SensorBase):
             }
 
             self._sensor_status = vehicle.sensor_status.copy()
+        
+            # Soundplayer-Objekt merken und ggf. verfügbare Sounds einlesen, wenn der Player aktiviert wird
+            if not self._sound_player:
+                sound_player = self._vehicle.get_sensor("sound:player")
 
+                if sound_player and sound_player.is_active():
+                    self._sound_player     = sound_player
+                    self._available_sounds = self._sound_player.soundfiles
+                    self._playing_sounds   = self._sound_player.playing
+            else:
+                if self._sound_player.is_active():
+                    self._playing_sounds = self._sound_player.playing
+                else:
+                    self._sound_player     = None
+                    self._available_sounds = []
+                    self._playing_sounds   = []
+
+            # Sperre aufheben
             self._status_lock.release()
-
+        
         # Empfangene Steuerbefehle verarbeiten
         while True:
             try:
@@ -201,3 +239,9 @@ class UDPRemoteControl(SensorBase):
                     sensor.disable()
                 except:
                     pass
+            elif command_.cmd == "soundplayer" and command_.action == "play":
+                if self._sound_player:
+                    self._sound_player.play(command_.soundfile)
+            elif command_.cmd == "soundplayer" and command_.action == "stop":
+                if self._sound_player:
+                    self._sound_player.stop(command_.soundfile)
