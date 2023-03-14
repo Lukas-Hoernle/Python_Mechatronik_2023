@@ -51,3 +51,36 @@ Sensoren deaktiviert und reaktiviert werden. Dies wird beispielsweise genutzt,
 um zwischen unterschiedlichen Strategien für autonomes Fahren umzuschalten.
 
 Weitere Sensoren können durch Erben von `SensorBase` leicht hinzugefügt werden.
+
+Notizen zum Audio/Video-Streaming
+---------------------------------
+
+Bei angeschlossener Pi-Camera kann das Python-Program `camera.py` gestartet werden,
+um einen Livestream der Kamera zu ermöglichen. Hierfür einfach mit einem Webbrowser
+den Raspberry Pi auf Port 8000 aufrufen, zum Beispiel so:
+
+  http://192.167.178.121:8000/
+
+Leider bietet das Programm derzeit noch keinen Audiostream, da hierfür ein direkter
+Hardwarezugriff auf die Audiodevices des Raspberry Pi (beispielsweise mit ALSA-Bindings
+für Python) notwendig wäre. Diese Funktion kommt vielleicht in einer späteren Version.
+
+Sofern die Gegenseite ein Linux-System ist, kann im Rasbperry Pi OS (Debian) das Programm
+`trx` (http://www.pogo.org.uk/~mark/trx/) installiert werden. Im Vergleich zu allen
+anderen Lösungen mit VLC, FFMpeg, Icecast usw. bietet es mit Abstand die geringste
+Latenz weit unter einer Sekunde. Mit dem Skript `audiostream.sh` kann ein ausgehender
+Stream zum Abhören eines an den Pi angeschlossenen USB-Mikrofons und der Empfang eines
+eingehenden Streams zur Wiedergabe auf einem am Kopfhörerausgang angeschlossenen Lautsprecher
+gestartet werden. Das Skript benutzt hierfür folgende Konsolenbefehle:
+
+```sh
+trx-tx -h <ip_adresse_remote> -d plughw:1
+trx-rx -m 100
+```
+
+Die Befehle auf dem Zielrechner sehen dann so aus:
+
+```sh
+trx-rx
+trx-tx -h <ip_addresse_raspi>
+```
