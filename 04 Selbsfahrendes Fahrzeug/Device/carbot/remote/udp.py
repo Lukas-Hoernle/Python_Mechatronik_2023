@@ -135,9 +135,9 @@ class UDPRemoteControl(SensorBase):
                 try:
                     # Neue Daten vom Socket empfangen und verarbeiten
                     data, address = socket_.recvfrom(self._BUFFER_SIZE)
-                    command = json.loads(data)
+                    command = json.loads(data.decode())
 
-                    if not hasattr(command, "cmd"):
+                    if not "cmd" in command:
                         continue
 
                     if command["cmd"] == "vehicle_status":

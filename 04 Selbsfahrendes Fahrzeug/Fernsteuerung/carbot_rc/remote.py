@@ -175,23 +175,23 @@ class RemoteConnection:
                 try:
                     # Neue Daten vom Socket empfangen und verarbeiten
                     data = socket_.recv(self._BUFFER_SIZE)
-                    command = json.loads(data)
+                    command = json.loads(data.decode())
 
-                    if not hasattr(command, "cmd") or not hasattr(command, "data"):
+                    if not "cmd" in command or not "data" in command:
                         continue
 
                     if command["cmd"] == "vehicle_status_response":
                         # Neue Fahrzeugparameter empfangen
                         if self.on_receive_vehicle_status:
-                            self.on_receive_vehicle_status(command.data)
+                            self.on_receive_vehicle_status(command["data"])
                     elif command["cmd"] == "sensor_status_response":
                         # Neue Sensorinformationen empfangen
                         if self.on_receive_sensor_status:
-                            self.on_receive_sensor_status(command.data)
+                            self.on_receive_sensor_status(command["data"])
                     elif command["cmd"] == "sound_status_response":
                         # Neuer Soundstatus empfangen
                         if self.on_receive_sound_status:
-                            self.on_receive_sound_status(command.data)
+                            self.on_receive_sound_status(command["data"])
                 except OSError as err:
                     if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
                         continue

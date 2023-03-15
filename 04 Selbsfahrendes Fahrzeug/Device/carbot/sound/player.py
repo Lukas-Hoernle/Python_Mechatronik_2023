@@ -70,7 +70,8 @@ class SoundPlayer(SensorBase):
                 if entry.is_file():
                     result.append(entry.name)
         
-        return result.sort()
+        result.sort()
+        return result
 
     @property
     def playing(self):
