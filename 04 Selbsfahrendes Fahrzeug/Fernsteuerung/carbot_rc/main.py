@@ -8,6 +8,6 @@ def main():
     """
     print("carbot_rc sagt Hallo!")
 
-    connection = RemoteConnection(host="", port=6789, remote_port=9876, update_frequency=5)
+    connection = RemoteConnection(host="", port=6789, remote_port=9876, update_frequency=10)
     window = MainWindow(connection)
     window.mainloop()

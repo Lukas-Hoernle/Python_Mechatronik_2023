@@ -114,7 +114,7 @@ class SoundPlayer(SensorBase):
         Aus beliebigen Threads aufrufbare Methode, um den Abbruch eines Sounds anzufordern.
         """
         self._pending_commands.append({
-            "cmd": "play",
+            "cmd": "stop",
             "soundfile": soundfile
         })
     
@@ -123,5 +123,7 @@ class SoundPlayer(SensorBase):
         Aufgerufen im Hauptthread des Fahrzeugs, um die Wiedergabe eines Sounds zu stoppen.
         """
         for process in self._player_processes:
+            process.poll()
+
             if process._soundfile_ == soundfile and process.returncode == None:
                 process.terminate()

@@ -50,7 +50,7 @@ class UDPRemoteControl(SensorBase):
     """
 
     _BUFFER_SIZE = 4096
-    _TIMEOUT_S = 0.1
+    _TIMEOUT_S = 0.05
 
     def __init__(self, host, port):
         """

@@ -178,7 +178,7 @@ class MainWindow:
 
             for sensor in sensors:
                 def _create_widget(sensor):
-                    def _callback(*args, **kwargs):
+                    def _callback():
                         self._connection.send_enable_sensor(sensor, variable.get() == 1)
 
                     nonlocal column
@@ -241,8 +241,8 @@ class MainWindow:
 
             for soundfile in soundfiles:
                 def _create_widget(soundfile):
-                    def _callback(*args, **kwargs):
-                        self._connection.send_play_soundfile(soundfile, variable.get() == 0)
+                    def _callback():
+                        self._connection.send_play_soundfile(soundfile, variable.get() == 1)
 
                     nonlocal column
                     column += 1
@@ -258,14 +258,12 @@ class MainWindow:
         
         if "playing" in self._sound_status:
             playing = self._sound_status["playing"]
-            print(playing) ####
         else:
             playing = []
 
         for soundfile in self._sound_widgets:
             variable = self._sound_variables[soundfile]
-            active = soundfile in playing
-            variable.set(1 if active else 0)
+            variable.set(1 if soundfile in playing else 0)
 
     # -----------------
     # Fahrzeugparameter
