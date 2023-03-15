@@ -13,12 +13,13 @@ class MainWindow:
         erzeugte Instanz der Klasse RemoteConnection übergeben werden.
         """
         # Das Fenster selbst
-        self._root = ttk.Window(title="Carbot Fernsteuerung", size=(1200, 600), resizable=(False, False))
+        self._root = ttk.Window(title="Carbot Fernsteuerung", size=(1400, 600), resizable=(False, False))
         self._root.columnconfigure(1, weight=1)
         self._root.place_window_center()
 
         # Verbindung zum Fahrzeug
         connection_frame = self._create_row_frame(self._root, row=0, text="IP-Adresse", dark=True)
+        connection_frame.columnconfigure(0, weight=1)
         
         self._remote_ip = tk.StringVar(value="192.168.178.121")
         self._connect_button_text = tk.StringVar(value="Verbindung herstellen")
@@ -34,15 +35,17 @@ class MainWindow:
 
         # Sensoren
         self._sensor_frame = self._create_row_frame(self._root, row=1, text="Sensorstatus")
-        self._sensor_widgets = {}
-        self._sensor_status  = {}
+        self._sensor_widgets   = {}
+        self._sensor_variables = {}
+        self._sensor_status    = {}
 
         self._update_sensor_widgets()
 
         # Audiowiedergabe
         self._sound_frame = self._create_row_frame(self._root, row=2, text="Audiowiedergabe")
-        self._sound_widgets = {}
-        self._sound_status  = {}
+        self._sound_widgets   = {}
+        self._sound_variables = {}
+        self._sound_status    = {}
 
         self._update_sound_widgets()
         
@@ -81,9 +84,8 @@ class MainWindow:
         """
         ttk.Label(root, text=text, bootstyle=(INVERSE, DARK), padding=(6,6,24,6)).grid(row=row, column=0, sticky=(N,E,S,W))
 
-        frame = ttk.Frame(root, bootstyle=SECONDARY if dark else LIGHT, padding=6)
+        frame = ttk.Frame(root, bootstyle=SECONDARY if dark else DEFAULT, padding=6)
         frame.grid(row=row, column=1, sticky=(N,E,S,W))
-        frame.columnconfigure(0, weight=1)
 
         return frame
 
@@ -108,6 +110,16 @@ class MainWindow:
         def _in_ui_thread():
             self._connected = connected
             self._update_connection_widgets()
+
+            if not connected:
+                self._sensor_status = {}
+                self._update_sensor_widgets()
+
+                self._sound_status = {}
+                self._update_sound_widgets()
+
+                self._vehicle_status = {}
+                self._update_vehicle_widgets()
 
         self._root.after_idle(_in_ui_thread)
 
@@ -144,7 +156,47 @@ class MainWindow:
         """
         Widgets für den Sensorstatus aktualisieren.
         """
-        pass
+        sensors = list(self._sensor_status)
+        sensors.sort()
+
+        rebuild_widgets = False
+        if not sensors:
+            rebuild_widgets = True
+
+        for sensor in sensors:
+            if not sensor in self._sensor_widgets:
+                rebuild_widgets = True
+                break
+        
+        if rebuild_widgets:
+            for widget in self._sensor_widgets.values():
+                widget.grid_remove()
+
+            self._sensor_widgets   = {}
+            self._sensor_variables = {}
+            column = -1
+
+            for sensor in sensors:
+                def _create_widget(sensor):
+                    def _callback(*args, **kwargs):
+                        self._connection.send_enable_sensor(sensor, variable.get() == 1)
+
+                    nonlocal column
+                    column += 1
+
+                    variable = tk.IntVar()
+                    widget = ttk.Checkbutton(self._sensor_frame, text=sensor, variable=variable, command=_callback, bootstyle="round-toggle", padding=6)
+                    widget.grid(row=0, column=column, sticky=(N,E,S,W), padx=6)
+
+                    self._sensor_widgets[sensor] = widget
+                    self._sensor_variables[sensor] = variable
+                
+                _create_widget(sensor)
+        
+        for sensor in sensors:
+            variable = self._sensor_variables[sensor]
+            active = self._sensor_status[sensor]
+            variable.set(1 if active else 0)
 
     # ---------------
     # Audiowiedergabe
@@ -164,7 +216,56 @@ class MainWindow:
         """
         Widgets für die Audiowiedergabe aktualisieren.
         """
-        pass
+        if "soundfiles" in self._sound_status:
+            soundfiles = list(self._sound_status["soundfiles"])
+            soundfiles.sort()
+        else:
+            soundfiles = []
+
+        rebuild_widgets = False
+        if not soundfiles:
+            rebuild_widgets = True
+
+        for soundfile in soundfiles:
+            if not soundfile in self._sound_widgets:
+                rebuild_widgets = True
+                break
+        
+        if rebuild_widgets:
+            for widget in self._sound_widgets.values():
+                widget.grid_remove()
+
+            self._sound_widgets   = {}
+            self._sound_variables = {}
+            column = -1
+
+            for soundfile in soundfiles:
+                def _create_widget(soundfile):
+                    def _callback(*args, **kwargs):
+                        self._connection.send_play_soundfile(soundfile, variable.get() == 0)
+
+                    nonlocal column
+                    column += 1
+
+                    variable = tk.IntVar()
+                    widget = ttk.Checkbutton(self._sound_frame, text=soundfile, variable=variable, command=_callback, bootstyle=TOOLBUTTON, padding=6)
+                    widget.grid(row=0, column=column, sticky=(N,E,S,W), padx=6)
+
+                    self._sound_widgets[soundfile] = widget
+                    self._sound_variables[soundfile] = variable
+                
+                _create_widget(soundfile)
+        
+        if "playing" in self._sound_status:
+            playing = self._sound_status["playing"]
+            print(playing) ####
+        else:
+            playing = []
+
+        for soundfile in self._sound_widgets:
+            variable = self._sound_variables[soundfile]
+            active = soundfile in playing
+            variable.set(1 if active else 0)
 
     # -----------------
     # Fahrzeugparameter
