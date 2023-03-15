@@ -406,9 +406,13 @@ class MainWindow:
         if not self._connected:
             return
         
+        if event.x < 0:
+            event.x = 0
         if event.x > self._control_canvas_size_px:
             event.x = self._control_canvas_size_px
 
+        if event.y < 0:
+            event.y = 0
         if event.y > self._control_canvas_size_px:
             event.y = self._control_canvas_size_px
 
@@ -419,6 +423,12 @@ class MainWindow:
             event.x + self._control_marker_size_px,
             event.y + self._control_marker_size_px,
         )
+
+        target_speed = -1.0 * (event.y - self._control_canvas_size_px / 2) / (self._control_canvas_size_px / 2)
+        direction = (event.x - self._control_canvas_size_px / 2) / (self._control_canvas_size_px / 2)
+
+        self._connection.send_set_attribute("target_speed", target_speed)
+        self._connection.send_set_attribute("direction", direction)
     
     def _on_control_canvas_release(self, event):
         """
