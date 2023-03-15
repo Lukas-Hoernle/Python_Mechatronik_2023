@@ -31,22 +31,20 @@ class UDPRemoteControl(SensorBase):
         * `{"cmd": "set", "attr": "direction", "value": 0}`
         * `{"cmd": "enable_sensor", "name": "…"}`
         * `{"cmd": "disable_sensor", "name": "…"}`
-        * `{"cmd": "soundplayer", "action": "play", "soundfile": "…"}`
-        * `{"cmd": "soundplayer", "action": "stop", "soundfile": "…"}`
+        * `{"cmd": "play_sound", "name": "…"}`
+        * `{"cmd": "stop_sound", "name": "…"}`
     
     Kommandos mit direkter Antwort:
 
-        * `{"cmd": "vehicle_status"}`
+        * `{"cmd": "vehicle_status"}`:
           liefert als Antwort ein Objekt mit den Fahrzeugparametern und ihren Werten.
 
-        * `{"cmd": "sensor_status"}`
+        * `{"cmd": "sensor_status"}`:
           liefert als Antwort ein Objekt mit den Sensornamen und einem Aktiv-Flag.
         
-        * `{"cmd": "soundplayer", "action": "get_soundfiles"}`
-          liefert als Antwort eine Liste mit den Namen der verfügbaren Sounds.
-
-        * `{"cmd": "soundplayer", "action": "get_playing"}`
-          liefert als Antwort eine Liste mit den Namen der gerade wiedergegebenen Sounds.
+        * `{"cmd": "sound_status"}`:
+          liefert als Antwort ein Dictionary mit den beiden Attributen soundfiles
+          und playing. Beide beinhalten jeweils eine Liste mit den Namen der Audiodateien.
     
     Die Nachrichten in beide Richtungen dürfen nicht größer als 4096 Bytes sein.
     """
@@ -81,33 +79,47 @@ class UDPRemoteControl(SensorBase):
         self._available_sounds = []
         self._playing_sounds   = []
         self._status_lock      = threading.Lock()
-        self._server_thread    = threading.Thread(target=self._server_thread_loop)
+        self._network_thread   = threading.Thread(target=self._network_thread_loop)
 
-        self._server_thread.setDaemon(True)
-        self._server_thread.start()
+        self._network_thread.setDaemon(True)
+        self._network_thread.start()
     
-    def _server_thread_loop(self):
+    def _network_thread_loop(self):
         """
-        Hauptschleife des Server-Threads. Öffnet den UDP-Socket und bearbeitet die darüber empfangenen
+        Hauptschleife des Netzwerk-Threads. Öffnet den UDP-Socket und bearbeitet die darüber empfangenen
         Kommandos. Anfragen nach dem Fahrzeugstatus werden anhand der letzten internen Kopie des
         Fahrzeugstatus direkt beantwortet. Alle anderen Anfragen werden in einer FIFO-Queue gesammelt
         und vom Fahrzeug-Thread bei nächster Gelegenheit abgearbeitet.
         """
-        # Sockets öffnen sowohl für UPv6 als auch IPv4
+        # Sockets öffnen sowohl für IPv6 als auch IPv4
         sockets = []
 
-        for address_info in socket.getaddrinfo(self._host, self._port, proto=socket.IPPROTO_UDP):
-            try:
-                socket_ = socket.socket(
-                    family = address_info.af,
-                    type   = address_info.socktype | socket.SOCK_NONBLOCK,
-                    proto  = address_info.proto
-                )
+        # FIXME: Wirft OSError: [Errno 98] Address already in use, wenn IPv4 und IPv6 verwendet wird.
+        # FIXME: Aktuell unklar, wie sowohl IPv4 als auch IPv6 unterstützt werden kann. Deshalb zunächst nur IPv4.
+        # for address_info in socket.getaddrinfo(self._host, self._port, proto=socket.IPPROTO_UDP):
+        #     try:
+        #         socket_ = socket.socket(
+        #             family = address_info[0],
+        #             type   = address_info[1] | socket.SOCK_NONBLOCK,
+        #             proto  = address_info[2]
+        #         )
+        #
+        #         socket_.bind((self._host if self._host else "", self._port))
+        #         sockets.append(socket_)
+        #     except Exception as exc:
+        #         print(f"Socket-Fehler: {exc}")
+        #         traceback.print_exc()
+        try:
+            socket_ = socket.socket(
+                family = socket.AF_INET,
+                type   = socket.SOCK_DGRAM | socket.SOCK_NONBLOCK
+            )
 
-                socket_.bind((self._host, self._port))
-                sockets.append(socket_)
-            except:
-                pass
+            socket_.bind((self._host if self._host else "", self._port))
+            sockets.append(socket_)
+        except Exception as exc:
+            print(f"Socket-Fehler: {exc}")
+            traceback.print_exc()
         
         # UDP-Pakete über die Sockets empfangen und verarbeiten
         sockets_without_data = 0
@@ -128,24 +140,22 @@ class UDPRemoteControl(SensorBase):
                     if not hasattr(command, "cmd"):
                         continue
 
-                    if command.cmd == "vehicle_status":
+                    if command["cmd"] == "vehicle_status":
                         # Abfrage des Fahrzeugstatus direkt beantworten
                         with self._status_lock:
-                            response = json.dumps(self._vehicle_status)
-                            socket_.sendto(response, address)
-                    elif command.cmd == "sensor_status":
+                            response = json.dumps({"cmd": "vehicle_status_response", "data": self._vehicle_status})
+                            socket_.sendto(response.encode(), address)
+                    elif command["cmd"] == "sensor_status":
                         # Abfrage des Sensorstatus direkt beantworten
                         with self._status_lock:
-                            response = json.dumps(self._sensor_status)
-                            socket_.sendto(response, address)
-                    elif command.cmd == "soundplayer" and command.action == "get_soundfiles":
+                            response = json.dumps({"cmd": "sensor_status_response", "data": self._sensor_status})
+                            socket_.sendto(response.encode(), address)
+                    elif command["cmd"] == "sound_status":
+                        # Abfrage nach verfügbaren Soundfiles direkt beantworten
                         with self._status_lock:
-                            response = json.dumps(self._available_sounds)
-                            socket_.sendto(response, address)
-                    elif command.cmd == "soundplayer" and command.action == "get_playing":
-                        with self._status_lock:
-                            response = json.dumps(self._playing_sounds)
-                            socket_.sendto(response, address)
+                            sound_status = {"soundfiles": self._available_sounds, "playing": self._playing_sounds}
+                            response = json.dumps({"cmd": "sound_status_response", "data": sound_status})
+                            socket_.sendto(response.encode(), address)
                     else:
                         # Alle anderen Steuerbefehle im Fahrzeug-Thread bearbeiten
                         self._pending_commands.append(command)
@@ -157,7 +167,7 @@ class UDPRemoteControl(SensorBase):
                         print(f"Socket-Fehler: {err}")
                         traceback.print_exc()
                 except Exception as exc:
-                    print(f"Fehler im Server-Thread: {exc}")
+                    print(f"Fehler im Netzwerk-Thread: {exc}")
                     traceback.print_exc()
 
     def update(self, vehicle):
@@ -212,41 +222,41 @@ class UDPRemoteControl(SensorBase):
                 break
 
             command_ = {
-                "cmd": getattr(command, "cmd", ""),
-                "attr": getattr(command, "attr", ""),
-                "value": getattr(command, "value", ""),
-                "name": getattr(command, "name", ""),
+                "cmd":   command.get("cmd", ""),
+                "attr":  command.get("attr", ""),
+                "value": command.get("value", ""),
+                "name":  command.get("name", ""),
             }
             
-            if command_.cmd == "set" and command_.attr == "target_speed":
+            if command_["cmd"] == "set" and command_["attr"] == "target_speed":
                 # Zielgeschwindigkeit ändern
                 try:
                     vehicle.target_speed = int(command_.value)
                 except ValueError:
                     pass
-            elif command_.cmd == "set" and command_.attr == "direction":
+            elif command_["cmd"] == "set" and command_["attr"] == "direction":
                 # Fahrtrichtung ändern
                 try:
-                    vehicle.direction = int(command_.value)
+                    vehicle.direction = int(command_["value"])
                 except ValueError:
                     pass
-            elif command_.cmd == "enable_sensor":
+            elif command_["cmd"] == "enable_sensor":
                 # Sensor aktivieren
                 try:
-                    sensor = vehicle.get_sensor(command_.name)
+                    sensor = vehicle.get_sensor(command_["name"])
                     sensor.enable()
                 except:
                     pass
-            elif command_.cmd == "disable_sensor":
+            elif command_["cmd"] == "disable_sensor":
                 # Sensor deaktivieren
                 try:
-                    sensor = vehicle.get_sensor(command_.name)
+                    sensor = vehicle.get_sensor(command_["name"])
                     sensor.disable()
                 except:
                     pass
-            elif command_.cmd == "soundplayer" and command_.action == "play":
+            elif command_["cmd"] == "play_sound":
                 if self._sound_player:
-                    self._sound_player.play(command_.soundfile)
-            elif command_.cmd == "soundplayer" and command_.action == "stop":
+                    self._sound_player.play(command_["name"])
+            elif command_["cmd"] == "stop_sound":
                 if self._sound_player:
-                    self._sound_player.stop(command_.soundfile)
+                    self._sound_player.stop(command_["name"])
