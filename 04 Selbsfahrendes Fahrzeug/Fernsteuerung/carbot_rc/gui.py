@@ -13,7 +13,7 @@ class MainWindow:
         erzeugte Instanz der Klasse RemoteConnection übergeben werden.
         """
         # Das Fenster selbst
-        self._root = ttk.Window(title="Carbot Fernsteuerung", size=(1400, 480), resizable=(False, False))
+        self._root = ttk.Window(title="Carbot Fernsteuerung", size=(1400, 540), resizable=(False, False))
         self._root.columnconfigure(1, weight=1)
         self._root.place_window_center()
 
@@ -48,45 +48,43 @@ class MainWindow:
         
         # Fahrzeugparameter        
         vehicle_frame = self._create_row_frame(self._root, row=3, text="Fahrzeugparameter")
-        vehicle_frame_sub1 = ttk.Frame(vehicle_frame, padding=6)
-        vehicle_frame_sub1.grid(row=0, column=0, sticky=(N,E,S,W))
         size_px = 200
 
-        target_speed_meter = ttk.Meter(vehicle_frame_sub1, subtext="", amountused=0, textright="%", stripethickness=18, metersize=size_px, padding=6, bootstyle=PRIMARY)
+        target_speed_meter = ttk.Meter(vehicle_frame, subtext="", amountused=0, textright="%", stripethickness=18, metersize=size_px, padding=6, bootstyle=PRIMARY)
         target_speed_meter.grid(row=0, column=0)
-        target_speed_label = ttk.Label(vehicle_frame_sub1, text="target_speed")
+        target_speed_label = ttk.Label(vehicle_frame, text="target_speed")
         target_speed_label.grid(row=1, column=0)
         self._target_speed_value = target_speed_meter.amountusedvar
         self._target_speed_text  = target_speed_meter.labelvar
 
         self._obstacle_pushback = tk.DoubleVar()
-        obstacle_pushback_scale = ttk.Scale(vehicle_frame_sub1, state=DISABLED, orient=VERTICAL, length=size_px, from_=-1.0, to=1.0, variable=self._obstacle_pushback, bootstyle=PRIMARY)
+        obstacle_pushback_scale = ttk.Scale(vehicle_frame, state=DISABLED, orient=VERTICAL, length=size_px, from_=-1.0, to=1.0, variable=self._obstacle_pushback, bootstyle=PRIMARY)
         obstacle_pushback_scale.grid(row=0, column=1)
-        obstacle_pushback_label = ttk.Label(vehicle_frame_sub1, text="obstacle_pushback")
+        obstacle_pushback_label = ttk.Label(vehicle_frame, text="obstacle_pushback")
         obstacle_pushback_label.grid(row=1, column=1)
 
         speed_total = tk.DoubleVar()
-        speed_total_meter = ttk.Meter(vehicle_frame_sub1, subtext="", amountused=0, textright="%", stripethickness=18, metersize=size_px, padding=6, bootstyle=INFO)
+        speed_total_meter = ttk.Meter(vehicle_frame, subtext="", amountused=0, textright="%", stripethickness=18, metersize=size_px, padding=6, bootstyle=INFO)
         speed_total_meter.grid(row=0, column=2)
-        speed_total_label = ttk.Label(vehicle_frame_sub1, text="speed_total")
+        speed_total_label = ttk.Label(vehicle_frame, text="speed_total")
         speed_total_label.grid(row=1, column=2)
         self._speed_total_value = speed_total_meter.amountusedvar
         self._speed_total_text  = speed_total_meter.labelvar
 
         self._speed_left = tk.DoubleVar()
-        speed_left_scale = ttk.Scale(vehicle_frame_sub1, state=DISABLED, orient=VERTICAL, length=size_px, from_=-1.0, to=1.0, variable=self._speed_left, bootstyle=INFO)
+        speed_left_scale = ttk.Scale(vehicle_frame, state=DISABLED, orient=VERTICAL, length=size_px, from_=-1.0, to=1.0, variable=self._speed_left, bootstyle=INFO)
         speed_left_scale.grid(row=0, column=3)
-        speed_left_label = ttk.Label(vehicle_frame_sub1, text="speed_left")
+        speed_left_label = ttk.Label(vehicle_frame, text="speed_left")
         speed_left_label.grid(row=1, column=3)
 
         self._speed_right = tk.DoubleVar()
-        speed_right_scale = ttk.Scale(vehicle_frame_sub1, state=DISABLED, orient=VERTICAL, length=size_px, from_=-1.0, to=1.0, variable=self._speed_left, bootstyle=INFO)
+        speed_right_scale = ttk.Scale(vehicle_frame, state=DISABLED, orient=VERTICAL, length=size_px, from_=-1.0, to=1.0, variable=self._speed_left, bootstyle=INFO)
         speed_right_scale.grid(row=0, column=4)
-        speed_right_label = ttk.Label(vehicle_frame_sub1, text="speed_right")
+        speed_right_label = ttk.Label(vehicle_frame, text="speed_right")
         speed_right_label.grid(row=1, column=4)
 
         self._direction = tk.DoubleVar()
-        direction_frame = ttk.Frame(vehicle_frame_sub1, padding=6)
+        direction_frame = ttk.Frame(vehicle_frame, padding=6)
         direction_frame.grid(row=2, column=0, pady=36)
         direction_scale = ttk.Scale(direction_frame, state=DISABLED, orient=HORIZONTAL, length=size_px, from_=-1.0, to=1.0, variable=self._direction, bootstyle=INFO)
         direction_scale.grid(row=0, column=0)
@@ -94,7 +92,7 @@ class MainWindow:
         direction_label.grid(row=1, column=0)
 
         self._line_pattern = [tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar()]
-        line_pattern_frame = ttk.Frame(vehicle_frame_sub1, padding=6)
+        line_pattern_frame = ttk.Frame(vehicle_frame, padding=6)
         line_pattern_frame.grid(row=2, column=1, sticky=(N,E,S,W), pady=24)
         line_pattern_button1 = ttk.Checkbutton(line_pattern_frame, text="1", variable=self._line_pattern[0], state=DISABLED, bootstyle=(TOOLBUTTON, DANGER))
         line_pattern_button1.grid(row=0, column=0)
@@ -111,6 +109,30 @@ class MainWindow:
 
         self._vehicle_status = {}
         self._update_vehicle_widgets()
+
+        # Steuerfläche
+        ttk.Label(vehicle_frame, padding=48).grid(row=0, column=5)
+        vehicle_frame.columnconfigure(6, weight=1)
+        self._control_canvas_size_px = 250
+        self._control_marker_size_px = 9
+
+        self._control_canvas = tk.Canvas(vehicle_frame)
+        self._control_canvas.grid(row=0, column=6, rowspan=2, sticky=(N,E,S,W))
+        self._control_canvas.bind("<Button-1>", self._on_control_canvas_click)
+        self._control_canvas.bind("<B1-Motion>", self._on_control_canvas_click)
+        self._control_canvas.bind("<ButtonRelease-1>", self._on_control_canvas_release)
+
+        self._control_canvas.create_rectangle(0, 0, self._control_canvas_size_px, self._control_canvas_size_px, fill="#FFF0C0", outline="black")
+        self._control_canvas.create_line(self._control_canvas_size_px / 2, 0, self._control_canvas_size_px / 2, self._control_canvas_size_px, fill="black")
+        self._control_canvas.create_line(0, self._control_canvas_size_px / 2, self._control_canvas_size_px, self._control_canvas_size_px / 2, fill="black")
+
+        self._control_canvas_marker = self._control_canvas.create_oval(
+            (self._control_canvas_size_px / 2) - self._control_marker_size_px,
+            (self._control_canvas_size_px / 2) - self._control_marker_size_px,
+            (self._control_canvas_size_px / 2) + self._control_marker_size_px,
+            (self._control_canvas_size_px / 2) + self._control_marker_size_px,
+            fill="red", outline="black"
+        )
 
         # Dummy zum Ausfüllen des Fensters nach unten
         self._root.rowconfigure(4, weight=1)
@@ -372,6 +394,49 @@ class MainWindow:
         line_pattern = self._vehicle_status.get("line_pattern", [])
         for i in range(len(line_pattern)):
             self._line_pattern[i].set(line_pattern[i])
+
+    # ------------
+    # Steuerfläche
+    # ------------
+
+    def _on_control_canvas_click(self, event):
+        """
+        Fahrzeugparameter bei Klick auf die Steuerfläche ändern.
+        """
+        if not self._connected:
+            return
+        
+        if event.x > self._control_canvas_size_px:
+            event.x = self._control_canvas_size_px
+
+        if event.y > self._control_canvas_size_px:
+            event.y = self._control_canvas_size_px
+
+        self._control_canvas.coords(
+            self._control_canvas_marker,
+            event.x - self._control_marker_size_px,
+            event.y - self._control_marker_size_px,
+            event.x + self._control_marker_size_px,
+            event.y + self._control_marker_size_px,
+        )
+    
+    def _on_control_canvas_release(self, event):
+        """
+        Fahrzeug stoppen, wenn die Maus losgelassen wird.
+        """
+        if not self._connected:
+            return
+        
+        self._control_canvas.coords(
+            self._control_canvas_marker,
+            (self._control_canvas_size_px / 2) - self._control_marker_size_px,
+            (self._control_canvas_size_px / 2) - self._control_marker_size_px,
+            (self._control_canvas_size_px / 2) + self._control_marker_size_px,
+            (self._control_canvas_size_px / 2) + self._control_marker_size_px,
+        )
+
+        self._connection.send_set_attribute("target_speed", 0.0)
+        self._connection.send_set_attribute("direction", 0.0)
 
     # --------------------
     # Öffentliche Methoden
