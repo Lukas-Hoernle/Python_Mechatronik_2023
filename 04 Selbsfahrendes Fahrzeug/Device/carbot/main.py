@@ -53,7 +53,7 @@ def main():
     vehicle.add_sensor("sound:player", SoundPlayer())
     vehicle.add_sensor("remote:udp", UDPRemoteControl("", 9876))
 
-    #vehicle.get_sensor("drive:random").disable()
+    vehicle.get_sensor("drive:random").disable()
     vehicle.get_sensor("drive:backforth").disable()
     vehicle.get_sensor("drive:line").disable()
 

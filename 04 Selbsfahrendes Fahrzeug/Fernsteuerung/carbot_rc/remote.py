@@ -148,8 +148,9 @@ class RemoteConnection:
                     continue
 
         while self._connected:
-            # Kleine Pause zur Entlastung der CPU
-            time.sleep(self._timeout_s)
+            ## FIXME: Prüfen
+            # # Kleine Pause zur Entlastung der CPU
+            # time.sleep(self._timeout_s)
 
             # Statusanfragen und vom UI vorgemerkte Befehle an das Fahrzeug senden
             remote_address = (self._remote_ip, self._remote_port)

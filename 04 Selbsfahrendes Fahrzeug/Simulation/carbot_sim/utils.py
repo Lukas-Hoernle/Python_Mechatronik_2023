@@ -61,7 +61,7 @@ class InfiniteTask(abc.ABC):
                 await self._update_frequency.sleep()
 
                 if not self.paused:
-                    self._update()
+                    self._update(self._vehicle)
 
         self.task = asyncio.create_task(_coroutine())
 

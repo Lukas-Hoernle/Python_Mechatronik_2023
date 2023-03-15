@@ -125,9 +125,10 @@ class UDPRemoteControl(SensorBase):
         sockets_without_data = 0
 
         while True:
-            if sockets_without_data == len(sockets):
-                # Kleine Pause zur Entlastung der CPU, wenn kein Socket Daten liefert
-                time.sleep(self._TIMEOUT_S)
+            # FIXME: Prüfen
+            # if sockets_without_data == len(sockets):
+            #     # Kleine Pause zur Entlastung der CPU, wenn kein Socket Daten liefert
+            #     time.sleep(self._TIMEOUT_S)
 
             sockets_without_data = 0
 
@@ -142,20 +143,23 @@ class UDPRemoteControl(SensorBase):
 
                     if command["cmd"] == "vehicle_status":
                         # Abfrage des Fahrzeugstatus direkt beantworten
-                        with self._status_lock:
-                            response = json.dumps({"cmd": "vehicle_status_response", "data": self._vehicle_status})
-                            socket_.sendto(response.encode(), address)
+                        # FIXME: Prüfen
+                        # with self._status_lock:
+                        response = json.dumps({"cmd": "vehicle_status_response", "data": self._vehicle_status})
+                        socket_.sendto(response.encode(), address)
                     elif command["cmd"] == "sensor_status":
                         # Abfrage des Sensorstatus direkt beantworten
-                        with self._status_lock:
-                            response = json.dumps({"cmd": "sensor_status_response", "data": self._sensor_status})
-                            socket_.sendto(response.encode(), address)
+                        # FIXME: Prüfen
+                        # with self._status_lock:
+                        response = json.dumps({"cmd": "sensor_status_response", "data": self._sensor_status})
+                        socket_.sendto(response.encode(), address)
                     elif command["cmd"] == "sound_status":
                         # Abfrage nach verfügbaren Soundfiles direkt beantworten
-                        with self._status_lock:
-                            sound_status = {"soundfiles": self._available_sounds, "playing": self._playing_sounds}
-                            response = json.dumps({"cmd": "sound_status_response", "data": sound_status})
-                            socket_.sendto(response.encode(), address)
+                        # FIXME: Prüfen
+                        # with self._status_lock:
+                        sound_status = {"soundfiles": self._available_sounds, "playing": self._playing_sounds}
+                        response = json.dumps({"cmd": "sound_status_response", "data": sound_status})
+                        socket_.sendto(response.encode(), address)
                     else:
                         # Alle anderen Steuerbefehle im Fahrzeug-Thread bearbeiten
                         self._pending_commands.append(command)
