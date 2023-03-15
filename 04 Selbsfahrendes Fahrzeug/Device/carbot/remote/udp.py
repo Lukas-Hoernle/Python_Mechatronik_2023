@@ -235,13 +235,13 @@ class UDPRemoteControl(SensorBase):
             if command_["cmd"] == "set" and command_["attr"] == "target_speed":
                 # Zielgeschwindigkeit ändern
                 try:
-                    vehicle.target_speed = int(command_["value"])
+                    vehicle.target_speed = float(command_["value"])
                 except ValueError:
                     pass
             elif command_["cmd"] == "set" and command_["attr"] == "direction":
                 # Fahrtrichtung ändern
                 try:
-                    vehicle.direction = int(command_["value"])
+                    vehicle.direction = float(command_["value"])
                 except ValueError:
                     pass
             elif command_["cmd"] == "enable_sensor":

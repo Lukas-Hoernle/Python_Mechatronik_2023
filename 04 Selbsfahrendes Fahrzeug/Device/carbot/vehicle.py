@@ -123,13 +123,13 @@ class Vehicle:
             elif self._speed_total < 0:
                 self._speed_total = min(self._speed_total, -0.4)
 
-            # Richtung umkehren, wenn einem Hinderniss ausgewichen wird
-            if prev_speed_total > 0 and self._speed_total < 0 \
-            or prev_speed_total < 0 and self._speed_total > 0:
-                self.direction *= -1
+            # # Richtung umkehren, wenn einem Hinderniss ausgewichen wird
+            # if prev_speed_total > 0 and self._speed_total < 0 \
+            # or prev_speed_total < 0 and self._speed_total > 0:
+            #     self.direction *= -1
 
-                if self.direction >= -0.3 and self.direction <= 0.3:
-                    self.direction = clip(self.direction + 0.5, -1, 1)
+            #     if self.direction >= -0.3 and self.direction <= 0.3:
+            #         self.direction = clip(self.direction + 0.5, -1, 1)
 
             # Einzelgeschwindigkeiten anpassen für Lenkung
             self._speed_left  = self._speed_total
