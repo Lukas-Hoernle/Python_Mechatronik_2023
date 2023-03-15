@@ -126,9 +126,9 @@ class UDPRemoteControl(SensorBase):
 
         while True:
             # FIXME: Prüfen
-            # if sockets_without_data == len(sockets):
-            #     # Kleine Pause zur Entlastung der CPU, wenn kein Socket Daten liefert
-            #     time.sleep(self._TIMEOUT_S)
+            if sockets_without_data == len(sockets):
+                # Kleine Pause zur Entlastung der CPU, wenn kein Socket Daten liefert
+                time.sleep(self._TIMEOUT_S)
 
             sockets_without_data = 0
 
