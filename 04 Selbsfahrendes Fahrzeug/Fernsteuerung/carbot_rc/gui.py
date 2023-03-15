@@ -178,7 +178,7 @@ class MainWindow:
 
             for sensor in sensors:
                 def _create_widget(sensor):
-                    def _callback():
+                    def _callback(*args, **kwargs):
                         self._connection.send_enable_sensor(sensor, variable.get() == 1)
 
                     nonlocal column
@@ -241,15 +241,31 @@ class MainWindow:
 
             for soundfile in soundfiles:
                 def _create_widget(soundfile):
-                    def _callback():
-                        self._connection.send_play_soundfile(soundfile, variable.get() == 1)
+                    def _callback(*args, **kwargs):
+                        if not args:
+                            # Mausklick, ändert die Variable
+                            self._connection.send_play_soundfile(soundfile, variable.get() == 1)
+                        else:
+                            # Tastatur, ändert die Variable nicht
+                            self._connection.send_play_soundfile(soundfile, variable.get() == 0)
 
                     nonlocal column
                     column += 1
+                    key = column + 1
+
+                    if key < 10:
+                        text = f"[{key}] {soundfile}"
+                        key  = f"<KP_{key}>"
+                    else:
+                        text = soundfile
+                        key  = None
 
                     variable = tk.IntVar()
-                    widget = ttk.Checkbutton(self._sound_frame, text=soundfile, variable=variable, command=_callback, bootstyle=TOOLBUTTON, padding=6)
+                    widget = ttk.Checkbutton(self._sound_frame, text=text, variable=variable, command=_callback, bootstyle=TOOLBUTTON, padding=6)
                     widget.grid(row=0, column=column, sticky=(N,E,S,W), padx=6)
+
+                    if key:
+                        self._root.bind(key, _callback)
 
                     self._sound_widgets[soundfile] = widget
                     self._sound_variables[soundfile] = variable
