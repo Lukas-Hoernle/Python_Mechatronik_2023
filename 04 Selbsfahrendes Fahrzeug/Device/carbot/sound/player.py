@@ -45,13 +45,20 @@ class SoundPlayer(SensorBase):
             except IndexError:
                 break
         
-            if command.cmd == "play":
-                self._play(command.soundfile)
-            elif command.cmd == "stop":
-                self._stop(command.soundfile)
+            if command["cmd"] == "play":
+                self._play(command["soundfile"])
+            elif command["cmd"] == "stop":
+                self._stop(command["soundfile"])
         
         # Liste mit den laufenden Wiedergabeprogrammen aufräumen
-        active_players = [process for process in self._player_processes.copy() if process.returncode != None]
+        active_players = []
+
+        for process in self._player_processes.copy():
+            process.poll()
+
+            if process.returncode == None:
+                active_players.append(process)
+
         self._player_processes.clear()
 
         for process in active_players:
@@ -98,7 +105,7 @@ class SoundPlayer(SensorBase):
         filename = os.path.join(self._media_dir, soundfile)
         process = subprocess.Popen([self._player, filename])
 
-        if process.returncode != None:
+        if process.returncode == None:
             process._soundfile_ = soundfile
             self._player_processes.append(process)
 
@@ -116,5 +123,5 @@ class SoundPlayer(SensorBase):
         Aufgerufen im Hauptthread des Fahrzeugs, um die Wiedergabe eines Sounds zu stoppen.
         """
         for process in self._player_processes:
-            if process._soundfile_ == soundfile and process.returncode != None:
+            if process._soundfile_ == soundfile and process.returncode == None:
                 process.terminate()
