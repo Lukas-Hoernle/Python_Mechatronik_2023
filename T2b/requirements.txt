@@ -1,0 +1,8 @@
+import subprocess
+
+# Liste der Bibliotheken, die installiert werden sollen
+libraries_to_install = ['numpy', 'pandas', 'matplotlib']
+
+# Installation der Bibliotheken mit pip
+for library in libraries_to_install:
+    subprocess.call(['pip', 'install', library])

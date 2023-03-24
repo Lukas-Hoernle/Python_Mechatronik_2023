@@ -36,3 +36,5 @@ Um dieses Problem zu lösen, können wir asynchrone Methoden verwenden, die das 
 * Task "Blinker": Schaltet die Blinker anhand der aktuellen Einstellung (Links, Rechts, Warnblinker) ein oder aus.
 * Task "Licht": Schaltet das Fahrtlicht anhand der aktuellen Einstellung (Abblendlicht, Fernlicht, Lichtsensor) ein oder aus.
 * Task "Wischer": Schaltet den Scheibenwischer anhand der aktuellen Einstellung (Intervallwischen langsam, Intervallwischen schnell, Regensensor) ein oder aus.
+## Aufgabe 2 b) 
+Legen Sie ein neues Python-Projekt an oder kopieren Sie den Quellcode aus der Vorlesung und entfernen dabei alle Quellcodes, die für diese Aufgabe nicht benötigt werden. Das neue Projekt sollte zunächst nur ei - ne Datei requirements.txt zur Installation der Bibliotheken, ein Startskript, ein Hauptmodul sowie eine JSON-Datei zur Beschreibung der Hardwarebausteine beinhalten.
